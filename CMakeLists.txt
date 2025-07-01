@@ -82,8 +82,8 @@ if(BOOT2QT)
 
     add_definitions(-DQ_OS_BOOT2QT)
 
-    if(RASPBERRY_PI4)
-        add_definitions(-DQ_DEVICE_RASPBERRY_PI4)
+    if(RASPBERRY_PI)
+        add_definitions(-DQ_DEVICE_RASPBERRY_PI)
     endif()
 
     if(APALIS_IMX8)
@@ -158,7 +158,7 @@ message(STATUS "[DEFINE] ECOSYSTEM_BUILD_DATE          = ${BUILD_DATE}")
 message(STATUS "[DEFINE] ECOSYSTEM_GIT_TAG_HEX         = ${GIT_TAG_HEX}")
 
 message(STATUS "[DEFINE] BOOT2QT                    = ${BOOT2QT}")
-message(STATUS "[DEFINE] RASPBERRY_PI4              = ${RASPBERRY_PI4}")
+message(STATUS "[DEFINE] RASPBERRY_PI               = ${RASPBERRY_PI}")
 message(STATUS "[DEFINE] APALIS_IMX8                = ${APALIS_IMX8}")
 # ──────────────────────
 

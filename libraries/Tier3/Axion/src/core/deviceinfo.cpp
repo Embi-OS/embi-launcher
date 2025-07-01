@@ -111,9 +111,9 @@ bool DeviceInfo::isBoot2Qt()
 #endif
 }
 
-bool DeviceInfo::isRaspberryPi4()
+bool DeviceInfo::isRaspberryPi()
 {
-#ifdef Q_DEVICE_RASPBERRY_PI4
+#ifdef Q_DEVICE_RASPBERRY_PI
     return true;
 #else
     return false;

@@ -26,7 +26,7 @@ class DeviceInfo : public QObject,
     Q_PROPERTY(bool isAndroid      READ isAndroid      CONSTANT FINAL)
     Q_PROPERTY(bool isIOS          READ isIOS          CONSTANT FINAL)
     Q_PROPERTY(bool isBoot2Qt      READ isBoot2Qt      CONSTANT FINAL)
-    Q_PROPERTY(bool isRaspberryPi4 READ isRaspberryPi4 CONSTANT FINAL)
+    Q_PROPERTY(bool isRaspberryPi  READ isRaspberryPi  CONSTANT FINAL)
     Q_PROPERTY(bool isApalisIMX8   READ isApalisIMX8   CONSTANT FINAL)
     Q_PROPERTY(bool isUbuntuTouch  READ isUbuntuTouch  CONSTANT FINAL)
     Q_PROPERTY(bool isWindowsPhone READ isWindowsPhone CONSTANT FINAL)
@@ -79,7 +79,7 @@ public:
     static bool isAndroid();
     static bool isIOS();
     static bool isBoot2Qt();
-    static bool isRaspberryPi4();
+    static bool isRaspberryPi();
     static bool isApalisIMX8();
     static bool isUbuntuTouch();
     static bool isWindowsPhone();
