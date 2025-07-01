@@ -58,6 +58,7 @@ set(DEPLOYABLE_APPS ${DEPLOYABLE_APPS})
 
 # ──── Build config ────
 # add_definitions(-DREST_NO_WEBSOCKET)
+# add_definitions(-DQSLOG_FILE_ENABLED)
 # ──────────────────────
 
 # ────── Qt stuff ──────
@@ -77,7 +78,7 @@ if(BOOT2QT)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
     
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_OUTPUT_PREFIX}_Boot2Qt_${QT_VERSION}/v${CMAKE_PROJECT_VERSION} (${CMAKE_PROJECT_DESCRIPTION})")
-    set(QT_DEPLOY_PREFIX "/Ecosysteme")
+    set(QT_DEPLOY_PREFIX "/Embi")
 
     add_definitions(-DQ_OS_BOOT2QT)
 

@@ -6,22 +6,26 @@
 
 #include <QUtils>
 
-#include "dialogs/dialogmanager.h"
-#include "dialogs/snackbarmanager.h"
-
 Log::Log(QObject *parent) :
     QObject(parent)
 {
 
 }
 
+bool Log::m_ready = false;
 void Log::init()
 {
+    if(m_ready)
+        return;
+    m_ready = true;
+
     QsLogging::Logger::init(Paths::log("Log.log"));
 }
 
 void Log::unInit()
 {
+    m_ready = false;
+
     AXIONLOG_INFO()<<"Destroying logger instance !!!";
     QsLogging::Logger::destroyInstance();
 }

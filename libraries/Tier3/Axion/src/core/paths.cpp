@@ -22,8 +22,12 @@ Paths::Paths(QObject *parent) :
 
 }
 
+bool Paths::m_ready = false;
 void Paths::init()
 {
+    if(m_ready)
+        return;
+    m_ready = true;
 #ifdef Q_OS_WASM
 #else
     SvgIconHelper::setCachePath(cache());

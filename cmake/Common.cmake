@@ -361,8 +361,8 @@ function(embi_add_executable NAME)
     )
 
     if (${NAME} IN_LIST DEPLOYABLE_APPS)
-        message(NOTICE "[DEPLOYABLE_APPS] Installing ${NAME} in /Ecosysteme")
-        set(INSTALL_DIR "/Ecosysteme/${NAME}")
+        message(NOTICE "[DEPLOYABLE_APPS] Installing ${APP_NAME} in ${QT_DEPLOY_PREFIX}/${NAME}")
+        set(INSTALL_DIR "${QT_DEPLOY_PREFIX}/${NAME}")
         install(TARGETS ${NAME}
             RUNTIME DESTINATION "${INSTALL_DIR}"
             BUNDLE DESTINATION "${INSTALL_DIR}"
@@ -464,8 +464,8 @@ function(embi_add_application NAME)
     endif()
 
     if (${NAME} IN_LIST DEPLOYABLE_APPS)
-        message(NOTICE "[DEPLOYABLE_APPS] Installing ${NAME} in /Ecosysteme")
-        set(INSTALL_DIR "/Ecosysteme/${NAME}")
+        message(NOTICE "[DEPLOYABLE_APPS] Installing ${APP_NAME} in ${QT_DEPLOY_PREFIX}/${NAME}")
+        set(INSTALL_DIR "${QT_DEPLOY_PREFIX}/${NAME}")
         install(TARGETS ${APP_NAME}
             RUNTIME DESTINATION "${INSTALL_DIR}"
             BUNDLE DESTINATION "${INSTALL_DIR}"

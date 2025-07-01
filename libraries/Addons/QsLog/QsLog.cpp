@@ -197,14 +197,17 @@ void Logger::init(const QString& path)
 #ifdef Q_OS_WASM
     // consoleDest->setLoggingLevel(QsLogging::DebugLevel);
     // consoleDest->setIncludeColor(false);
-#elif QT_NO_DEBUG
-    QsLogging::DestinationPtr fileDest = QsLogging::DestinationFactory::MakeFileDestination(path,
-                                                                                            QsLogging::EnableLogRotation,
-                                                                                            QsLogging::MaxSizeBytes(1024 * 1024 * 100),  // Max 100 MB per file
-                                                                                            QsLogging::MaxOldLogCount(4));               // Max 5 files
-    fileDest->setLoggingLevel(QsLogging::DebugLevel);
-    fileDest->setIncludeColor(false);
-    QsLogging::Logger::instance().addDestination(fileDest);
+#elif defined(QSLOG_FILE_ENABLED) && defined(QT_NO_DEBUG)
+    if(!path.isEmpty())
+    {
+        QsLogging::DestinationPtr fileDest = QsLogging::DestinationFactory::MakeFileDestination(path,
+                                                                                                QsLogging::EnableLogRotation,
+                                                                                                QsLogging::MaxSizeBytes(1024 * 1024 * 100),  // Max 100 MB per file
+                                                                                                QsLogging::MaxOldLogCount(4));               // Max 5 files
+        fileDest->setLoggingLevel(QsLogging::DebugLevel);
+        fileDest->setIncludeColor(false);
+        QsLogging::Logger::instance().addDestination(fileDest);
+    }
 #endif
     QsLogging::Logger::instance().addDestination(consoleDest);
     QsLogging::Logger::instance().setLoggingLevel(QsLogging::NoticeLevel);

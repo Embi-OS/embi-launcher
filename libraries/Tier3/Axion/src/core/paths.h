@@ -28,6 +28,9 @@ public:
 
 public slots:
     static void init();
+
+private:
+    static bool m_ready;
 };
 
 #endif // PATHS_H

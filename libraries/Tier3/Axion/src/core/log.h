@@ -34,6 +34,9 @@ public slots:
     static void unInit();
     bool clear();
     bool copy(const QString& path);
+
+private:
+    static bool m_ready;
 };
 
 #endif // LOG_H
