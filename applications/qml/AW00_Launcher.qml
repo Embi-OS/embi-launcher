@@ -16,6 +16,10 @@ BasicWindow {
     applicationModule: "L00_Launcher"
     applicationName: "AM00_Launcher"
 
+    hideCursor: DisplaySettings.hideCursor
+    hideKeyboard: DisplaySettings.hideKeyboard
+    contentRotation: DisplaySettings.rotation
+
     ThemeAttached.flat: true
     ThemeAttached.fine: true
     ThemeAttached.sharp: true
@@ -40,10 +44,6 @@ BasicWindow {
     ThemeAttached.colorPrimaryLight: ColorUtils.blend(Style.colorPrimary, Style.white, 0.2)
     ThemeAttached.colorPrimaryLighter: ColorUtils.blend(Style.colorPrimaryLight, Style.white, 0.2)
     ThemeAttached.colorPrimaryLightest: ColorUtils.blend(Style.colorPrimaryLighter, Style.white, 0.2)
-
-    hideCursor: DisplaySettings.hideCursor
-    hideKeyboard: DisplaySettings.hideKeyboard
-    contentRotation: DisplaySettings.rotation
 
     ImageColorsHelper {
         id: imageColorsHelper

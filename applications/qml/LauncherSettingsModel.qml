@@ -128,11 +128,4 @@ StandardObjectModel {
         icon: MaterialIcons.fileDocumentOutline
         delegate: SettingsLogsView {}
     }
-
-    StandardObject {
-        group: "400_Launcher"
-        text: qsTr("Launcher")
-        icon: MaterialIcons.rocketLaunch
-        delegate: SettingsLauncherView {}
-    }
 }

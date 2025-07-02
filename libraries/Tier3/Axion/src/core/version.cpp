@@ -29,8 +29,22 @@ QString Version::about() const
     QString about;
     about += tr("Produit")+QString(": %1").arg(getProductName())+"\n";
     about += tr("Version")+QString(": %1 [%2]").arg(getGlobalVersion().toString(),getVersionSuffix())+"\n";
+    about += tr("Version Qt")+QString(": %1").arg(QT_VERSION_STR)+"\n";
     about += tr("Entreprise")+QString(": %1 (%2)").arg(getCompany(), getWebsite())+"\n";
     about += tr("Copyright")+QString(": %1").arg(getCopyright());
+    return about;
+}
+
+QString Version::aboutQt() const
+{
+    QString about = QString(
+        "<h2>This program runs on Qt version %1.</h2>"
+        "<p></p>"
+        "<p>Qt is a C++ toolkit for cross-platform application development.</p>"
+        "<p>Qt provides single-source portability across all major desktop "
+        "operating systems. It is also available for embedded Linux and other "
+        "embedded and mobile operating systems.</p>"
+        ).arg(QT_VERSION_STR);
     return about;
 }
 

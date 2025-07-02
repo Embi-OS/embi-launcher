@@ -9,14 +9,13 @@ import Eco.Tier3.System
 RowContainer {
     id: root
 
-    drawFrame: true
+    spacing: 20
     radius: 10
-    color: Style.colorPrimaryDark
-    // fillHeight: true
     font: Style.barInfoFont
-    readonly property int barHeight: Style.barInfoHeight
 
     readonly property string time: DateTimeUtils.formatTime(DateTimeUtils.systemDateTime, Locale.ShortFormat)
+    readonly property string date: DateTimeUtils.formatDate(DateTimeUtils.systemDateTime)
+
     readonly property string language: LocaleSettings.locale
     readonly property LocaleFilterModel langModel: LocaleFilterModel {
         filters: [
@@ -28,6 +27,7 @@ RowContainer {
         ]
     }
 
+    signal menuClicked()
     signal aboutClicked()
     signal powerClicked()
     signal langChanged(string newLang)
@@ -38,46 +38,92 @@ RowContainer {
         root.langChanged(language);
     }
 
-    BasicBusyIndicator {
-        visible: Filesystem.drives.processing
-        size: root.barHeight
-        lineWidth: 0
-    }
-
-    SvgColorImage {
-        visible: !Filesystem.drives.isEmpty
-        icon: MaterialIcons.usb
+    ClickableIcon {
+        icon: MaterialIcons.menu
         color: Style.colorWhite
-        size: 0
-        iconHeight: root.barHeight
-        aspectRatio: Qt.KeepAspectRatioByExpanding
+        size: 32
+        onClicked: root.menuClicked()
     }
 
     BasicLabel {
-        font: root.font
-        text: root.language
-    }
-
-    BasicLabel {
-        font: root.font
+        font: Style.textTheme.title1
         text: root.time
     }
 
-    SvgColorImage {
-        id: logo
-        icon: Style.logo
-        color: Style.colorWhite
-        size: 0
-        iconHeight: root.barHeight
-        aspectRatio: Qt.KeepAspectRatioByExpanding
+    BasicLabel {
+        font: Style.textTheme.headline6
+        text: root.date
+    }
+
+    LayoutSpring {}
+
+    RowLayout {
+        id: rightLayout
+        FpsIndicator {
+            showMinimum: false
+            showMaximum: false
+            showJitter: false
+        }
+
+        BasicBusyIndicator {
+            visible: Filesystem.drives.processing
+            size: 24
+            lineWidth: 0
+        }
+
+        SvgColorImage {
+            visible: !Filesystem.drives.isEmpty
+            icon: MaterialIcons.usb
+            color: Style.colorWhite
+            size: 24
+        }
+
+        SvgColorImage {
+            visible: NetworkSettingsManager.currentWifiConnection?.connected ?? false
+            readonly property int signalStrength: NetworkSettingsManager.currentWifiConnection?.wirelessConfig?.signalStrength ?? 0
+            icon: signalStrength < 0 ? MaterialIcons.wifiStrengthOffOutline :
+                  signalStrength <= 10 ? MaterialIcons.wifiStrengthOutline :
+                  signalStrength <= 30 ? MaterialIcons.wifiStrength1 :
+                  signalStrength <= 55 ? MaterialIcons.wifiStrength2 :
+                  signalStrength <= 80 ? MaterialIcons.wifiStrength3 :
+                  signalStrength <= 100 ? MaterialIcons.wifiStrength4 : MaterialIcons.wifiStrengthOffOutline
+            color: Style.colorWhite
+            size: 24
+        }
+
+        SvgColorImage {
+            visible: NetworkSettingsManager.currentWiredConnection?.connected ?? false
+            icon: MaterialIcons.ethernet
+            color: Style.colorWhite
+            size: 24
+        }
+
+        BasicLabel {
+            font: root.font
+            text: root.language
+        }
+
+        Item {
+            Layout.fillHeight: true
+            implicitWidth: 10
+        }
+
+        BasicLabel {
+            font: Style.textTheme.title1
+            text: "Embi OS"
+        }
+
+        SvgColorImage {
+            icon: Style.icon
+            color: Style.colorWhite
+            size: 32
+        }
     }
 
     TapHandler {
-        gesturePolicy: TapHandler.ReleaseWithinBounds
-        grabPermissions: PointerHandler.TakeOverForbidden
-        parent: root.contentItem
-        margin: root.padding
-        target: root
+        parent: rightLayout
+        // margin: rightLayout.padding
+        target: rightLayout
         cursorShape: Qt.PointingHandCursor
         onTapped: menu.open()
     }

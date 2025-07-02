@@ -43,6 +43,7 @@ NetworkSettingsServiceModel::NetworkSettingsServiceModel(QObject *parent)
     m_roleNames.insert(SignalStrength, "signalStrength");
     m_roleNames.insert(Connected, "connected");
     m_roleNames.insert(Interface, "iface");
+    m_roleNames.insert(Address, "address");
 }
 
 /*!
@@ -116,6 +117,11 @@ QVariant NetworkSettingsServiceModel::data(const QModelIndex & index, int role) 
 #endif
         return "N/A";
     }
+    else if (role == Address) {
+        if(item->ipv4())
+            return item->ipv4()->getAddress();
+        return "N/A";
+    }
     return QVariant();
 }
 
@@ -177,6 +183,8 @@ void NetworkSettingsServiceModel::connectStateChanges(NetworkSettingsService* it
     connect(item, &NetworkSettingsService::typeChanged, this, &NetworkSettingsServiceModel::connectionStatusChanged);
     connect(item, &NetworkSettingsService::stateChanged, this, &NetworkSettingsServiceModel::connectionStatusChanged);
     connect(item, &NetworkSettingsService::nameChanged, this, &NetworkSettingsServiceModel::connectionStatusChanged);
+    connect(item, &NetworkSettingsService::ipv4Changed, this, &NetworkSettingsServiceModel::connectionStatusChanged);
+    connect(item, &NetworkSettingsService::ipv6Changed, this, &NetworkSettingsServiceModel::connectionStatusChanged);
 
     NetworkSettingsWireless* wireless = item->wirelessConfig();
     if (wireless)

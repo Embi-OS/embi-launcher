@@ -36,7 +36,8 @@ public:
         Identifier,
         SignalStrength,
         Connected,
-        Interface
+        Interface,
+        Address
     };
 
 

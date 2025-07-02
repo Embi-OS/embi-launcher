@@ -27,6 +27,7 @@ protected:
 public:
     Q_INVOKABLE void dumpInfos() const;
     Q_INVOKABLE QString about() const;
+    Q_INVOKABLE QString aboutQt() const;
     Q_INVOKABLE static QString versionToString(const QVersionNumber& version);
 };
 

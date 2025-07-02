@@ -199,6 +199,15 @@ void AxionHelper::showAbout()
     DialogManager::Get()->showMessage(settings);
 }
 
+void AxionHelper::showAboutQt()
+{
+    QVariantMap settings;
+    settings["message"] = tr("A propos de Qt!");
+    settings["infos"] = Version::Get()->aboutQt();
+    settings["buttonAccept"] = "OK";
+    DialogManager::Get()->showMessage(settings);
+}
+
 void AxionHelper::warningRestart(const QString& details)
 {
     if(AxionHelper::Get()->getPendingRestart())

@@ -244,6 +244,7 @@ public:
 public slots:
     static void warningWrongPage(const QString& page, int index=0);
     static void showAbout();
+    static void showAboutQt();
 
     static void warningRestart(const QString& details="");
     static void warningReboot(const QString& details="");

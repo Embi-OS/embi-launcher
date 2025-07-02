@@ -10,3 +10,13 @@ bool Launcher::init()
 {
     return true;
 }
+
+void Launcher::install()
+{
+
+}
+
+void Launcher::launch()
+{
+
+}
