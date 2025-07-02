@@ -11,15 +11,14 @@ Page {
     background: Background {}
 
     header: LauncherStatusBar {
+        menuIcon: MaterialIcons.menu
         onAboutClicked: AxionHelper.showAbout()
         onPowerClicked: powerPopup.open()
         onLangChanged: AxionHelper.warningRestart()
         onMenuClicked: drawer.open()
     }
 
-    contentItem: SettingsLauncherView {
-
-    }
+    contentItem: SettingsLauncherView {}
 
 //──────────────────────────────────────────────────────────────────────
 // Déclaration des composants globaux
@@ -32,37 +31,15 @@ Page {
         height: root.height-root.header.height
         interactive: false
         contentItem: PaneSplitView {
-            id: pane
             padding: 10
-            // drawFrame: true
-            proxyModel.enabled: pane.visible
+            proxyModel.enabled: visible
             active: drawer.position>=1.0
-            headerPadding: 10
-            footerPadding: 10
-            drawFooterSeparator: true
+            drawHeaderSeparator: true
             model: LauncherSettingsModel {}
 
-            footer: RowContainer {
-                topInset: pane.footerPadding
-                bottomInset: pane.footerPadding
-                leftInset: pane.footerPadding
-                rightInset: pane.footerPadding
-
-                ClickableIcon {
-                    icon: MaterialIcons.close
-                    color: Style.colorWhite
-                    size: 32
-                    onClicked: drawer.close()
-                }
-
-                LabelWithCaption {
-                    Layout.fillWidth: true
-                    horizontalAlignment: Qt.AlignRight
-                    textFont: Style.textTheme.body1
-                    text: qsTr("Adresse IPv4 Ethernet: %1").arg(NetworkSettingsManager.currentWiredConnection?.ipv4.address ?? "N/A")
-                    captionFont: Style.textTheme.body1
-                    caption: qsTr("Adresse IPv4 Wifi: %1").arg(NetworkSettingsManager.currentWifiConnection?.ipv4.address ?? "N/A")
-                }
+            header: LauncherInfosBar {
+                menuIcon: MaterialIcons.menu
+                onMenuClicked: drawer.close()
             }
         }
     }
