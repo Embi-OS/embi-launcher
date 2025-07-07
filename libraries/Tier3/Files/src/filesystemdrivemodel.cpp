@@ -178,9 +178,12 @@ void FilesystemDriveModel::eject(FilesystemDrive* drive)
         FILESLOG_CRITICAL()<<"Cannot eject boot or root drive"<<drive->getText();
     }
 
-    QUtils::Process::exec("umount", {drive->getDriveRootPath()}, [this](QProcess* process) {
+    QProcess *proc = new QProcess(this);
+    connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
         markDirty();
+        proc->deleteLater();
     });
+    proc->start("umount", {drive->getDriveRootPath()});
 #else
     FILESLOG_CRITICAL()<<"Cannot eject drive"<<drive->getText();
 #endif

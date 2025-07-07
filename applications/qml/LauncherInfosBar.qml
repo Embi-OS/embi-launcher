@@ -92,13 +92,14 @@ RowContainer {
 
         BasicLabel {
             font: Style.textTheme.title1
-            text: "Embi OS"
+            text: Style.label
         }
 
         SvgColorImage {
             icon: Style.icon
             color: Style.colorWhite
             size: 32
+            aspectRatio: Qt.KeepAspectRatioByExpanding
         }
     }
 }

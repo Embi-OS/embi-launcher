@@ -32,9 +32,9 @@ namespace Process
 namespace Filesystem
 {
 
-    bool copy(const QString& sourcePath, QString destPath, bool force=false);
+    bool copy(const QString& sourcePath, const QString& destPath, bool force=false);
     bool move(const QString& sourcePath, QString destPath, bool force=false);
-    bool link(const QString& sourcePath, QString destPath);
+    bool link(const QString& sourcePath, const QString& destPath);
     bool remove(const QString& path);
     bool clear(const QString& path);
     bool mkpath(const QString& path);

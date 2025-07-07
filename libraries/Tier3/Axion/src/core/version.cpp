@@ -38,13 +38,13 @@ QString Version::about() const
 QString Version::aboutQt() const
 {
     QString about = QString(
-        "<h2>This program runs on Qt version %1.</h2>"
-        "<p></p>"
-        "<p>Qt is a C++ toolkit for cross-platform application development.</p>"
-        "<p>Qt provides single-source portability across all major desktop "
-        "operating systems. It is also available for embedded Linux and other "
-        "embedded and mobile operating systems.</p>"
-        ).arg(QT_VERSION_STR);
+                        "<h2>This program runs on Qt version %1</h2>"
+                        "<p></p>"
+                        "<p>Qt is a C++ toolkit for cross-platform application development.</p>"
+                        "<p>Qt provides single-source portability across all major desktop "
+                        "operating systems. It is also available for embedded Linux and other "
+                        "embedded and mobile operating systems.</p>"
+                        ).arg(QT_VERSION_STR);
     return about;
 }
 

@@ -21,6 +21,7 @@ Window {
     property bool hideCursor: false
     property bool hideKeyboard: false
     property double contentRotation: 0
+    property string windowIcon: Style.icon
 
     property alias applicationHelper: applicationHelper
     ApplicationHelper {
@@ -28,7 +29,7 @@ Window {
         SvgIconHelper on windowIcon {
             iconWidth: 128
             iconHeight: 128
-            icon: Style.icon
+            icon: root.windowIcon
             color: Style.colorAccent
             aspectRatio: Qt.KeepAspectRatio
         }

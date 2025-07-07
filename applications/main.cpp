@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     Application *app = new Application(argc, argv);
 
-    ApplicationUpdater::init();
+    ApplicationController::init(false);
     LocaleSettings::init();
 
     AxionHelper::onRestartAccepted(Power::restart);

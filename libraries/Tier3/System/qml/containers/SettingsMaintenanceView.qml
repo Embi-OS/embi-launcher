@@ -30,8 +30,8 @@ PaneTreeView {
         id: backupImporter
     }
 
-    ApplicationUpdater {
-        id: applicationUpdater
+    ApplicationController {
+        id: applicationController
     }
 
     StandardObjectModel {
@@ -66,7 +66,7 @@ PaneTreeView {
             highlighted: true
             label: qsTr("Mettre à jour")
             icon: MaterialIcons.update
-            onClicked: applicationUpdater.run()
+            onClicked: applicationController.update()
         }
         FormButtonDelegate {
             enabled: root.editable

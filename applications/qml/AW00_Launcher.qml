@@ -11,7 +11,6 @@ BasicWindow {
 
     backendInitDelay: 0
     frontendInitDelay: 500
-    canLoadApplication: imageColorsHelper.isReady
     backend: A00_LauncherManager{}
     applicationModule: "L00_Launcher"
     applicationName: "AM00_Launcher"
@@ -25,6 +24,7 @@ BasicWindow {
     ThemeAttached.sharp: true
     ThemeAttached.dense: false
 
+    ThemeAttached.label: "Embi OS"
     ThemeAttached.icon: "qrc:/images/logo.svg"
     ThemeAttached.logo: "qrc:/images/logo.svg"
     ThemeAttached.splash: "qrc:/images/logo.svg"
@@ -45,6 +45,7 @@ BasicWindow {
     ThemeAttached.colorPrimaryLighter: ColorUtils.blend(Style.colorPrimaryLight, Style.white, 0.2)
     ThemeAttached.colorPrimaryLightest: ColorUtils.blend(Style.colorPrimaryLighter, Style.white, 0.2)
 
+    canLoadApplication: imageColorsHelper.isReady
     ImageColorsHelper {
         id: imageColorsHelper
         source: Style.backgroundImage

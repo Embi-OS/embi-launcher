@@ -16,9 +16,6 @@ private:
 
 public:
     bool init() final override;
-
-    Q_INVOKABLE void install();
-    Q_INVOKABLE void launch();
 };
 
 #endif // LAUNCHER_H

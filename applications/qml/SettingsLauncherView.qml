@@ -7,6 +7,20 @@ import L00_Launcher
 Item {
     id: root
 
+    readonly property bool editable: applicationController.hasAppController
+
+    ApplicationController {
+        id: applicationController
+        onErrorOccurred: (error) => DialogManager.showError(error)
+    }
+
+    component LauncherButton: RawButton {
+        implicitWidth: 300
+        implicitHeight: 120
+        spacing: 20
+        font: Style.textTheme.title1
+    }
+
     ColumnLayout {
         anchors.left: parent.left
         anchors.right: parent.right
@@ -15,29 +29,25 @@ Item {
         spacing: 40
 
         RowLayout {
+            id: buttons
             spacing: 20
-            RawButton {
-                implicitWidth: 300
-                implicitHeight: 120
-                spacing: 20
-                text: "Launch"
-                font: Style.textTheme.title1
-                icon.source: MaterialIcons.rocketLaunch
-                onClicked: Launcher.launch()
-            }
-            RawButton {
-                implicitWidth: 300
-                implicitHeight: 120
-                spacing: 20
+
+            LauncherButton {
+                highlighted: true
                 text: "Install"
-                font: Style.textTheme.title1
                 icon.source: MaterialIcons.applicationImport
-                onClicked: Launcher.install()
+                onClicked: applicationController.install()
+            }
+            LauncherButton {
+                enabled: root.editable
+                text: "Launch"
+                icon.source: MaterialIcons.rocketLaunch
+                onClicked: applicationController.launch()
             }
         }
 
         BasicLabel {
-            Layout.fillWidth: true
+            Layout.maximumWidth: buttons.width
             Layout.fillHeight: true
             text: Version.aboutQt()
             wrapMode: Text.Wrap
@@ -45,7 +55,6 @@ Item {
     }
 
     ColumnLayout {
-        id: networkAddresses
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.margins: 10
@@ -53,7 +62,7 @@ Item {
         BasicLabel {
             Layout.fillWidth: true
             horizontalAlignment: Qt.AlignHCenter
-            font: Style.textTheme.subtitle1
+            font: Style.textTheme.title2
             text: "Networks:"
             color: Style.colorWhiteFade
         }
@@ -61,17 +70,19 @@ Item {
         Repeater {
             model: ProxyModel {
                 delayed: true
-                sourceModel: NetworkSettingsManager.services
-                filterRoleName: "connected"
+                sourceModel: NetworkInterfaceModel {
+                    refreshInterval: 1000
+                }
+                filterRoleName: "up"
                 filterValue: true
             }
             delegate: BasicLabel {
                 required property string address
-                required property string iface
+                required property string name
                 Layout.fillWidth: true
                 horizontalAlignment: Qt.AlignRight
-                font: Style.textTheme.title2
-                text: ("%1: %2").arg(iface).arg(address)
+                font: Style.textTheme.title1
+                text: ("%1: %2").arg(name).arg(address)
                 color: Style.colorWhiteFade
             }
         }

@@ -117,14 +117,14 @@ bool QUtils::Process::exec(const QString &program, const QStringList &arguments,
 }
 #endif
 
-bool QUtils::Filesystem::copy(const QString& sourcePath, QString destPath, bool force)
+bool QUtils::Filesystem::copy(const QString& sourcePath, const QString& destPath, bool force)
 {
     QFileInfo src = QFileInfo(sourcePath);
     QFileInfo dst = QFileInfo(destPath);
 
     if(!src.exists())
     {
-        QUTILSLOG_WARNING()<<"Source:"<<sourcePath<<"does not exists";
+        QUTILSLOG_WARNING()<<"Source:"<<sourcePath<<"does not exist";
         return false;
     }
 
@@ -232,7 +232,7 @@ bool QUtils::Filesystem::move(const QString& sourcePath, QString destPath, bool 
     return remove(sourcePath);
 }
 
-bool QUtils::Filesystem::link(const QString& sourcePath, QString destPath)
+bool QUtils::Filesystem::link(const QString& sourcePath, const QString& destPath)
 {
     return QFile::link(sourcePath, destPath);
 }

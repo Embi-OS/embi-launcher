@@ -105,10 +105,11 @@ class Theme : public QObject,
     Q_WRITABLE_VAR_PROPERTY(bool, sharp, Sharp, false)
     Q_WRITABLE_VAR_PROPERTY(bool, dense, Dense, false)
 
+    Q_WRITABLE_REF_PROPERTY(QString, label, Label, "")
     Q_WRITABLE_REF_PROPERTY(QString, icon, Icon, "qrc:/images/logo.svg")
     Q_WRITABLE_REF_PROPERTY(QString, logo, Logo, "qrc:/images/logo.svg")
     Q_WRITABLE_REF_PROPERTY(QString, splash, Splash, "qrc:/images/logo.svg")
-    Q_WRITABLE_REF_PROPERTY(QString, backgroundImage, backgroundImage, "")
+    Q_WRITABLE_REF_PROPERTY(QString, backgroundImage, BackgroundImage, "")
     Q_WRITABLE_VAR_PROPERTY(int, backgroundAspect, BackgroundAspect, ImageFillModes::PreserveAspectCrop)
 
     Q_WRITABLE_PTR_PROPERTY(TextTheme, textTheme, TextTheme, nullptr)

@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.22) # TODO: 3.24
+cmake_minimum_required(VERSION 3.24) # TODO: 3.24
 
 ## Add paths to check for cmake modules:
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(QT_CREATOR_SKIP_MAINTENANCE_TOOL_PROVIDER ON)
 
-project(Embi-Launcher
-    VERSION 0.9.0
+project(Ecosysteme
+    VERSION 1.0.0
     DESCRIPTION "Shared"
     LANGUAGES CXX)
 
@@ -32,22 +32,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Qml)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Quick)
 
 # ─────── find_package GLOBAL ───────
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
-
-    set(CMAKE_FIND_PACKAGE_TARGETS_GLOBAL ON)
-
-else()
-
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS QuickTemplates2)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS QuickControls2)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS QuickControls2Impl)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS VirtualKeyboard)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Charts)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Concurrent)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Svg)
-
-endif()
+set(CMAKE_FIND_PACKAGE_TARGETS_GLOBAL ON)
 
 # ─────── Deploy ───────
 set(DEPLOYABLE_APPS "")
@@ -57,8 +42,7 @@ set(DEPLOYABLE_APPS ${DEPLOYABLE_APPS})
 # ──────────────────────
 
 # ──── Build config ────
-# add_definitions(-DREST_NO_WEBSOCKET)
-# add_definitions(-DQSLOG_FILE_ENABLED)
+add_definitions(-DQSLOG_FILE_ENABLED)
 # ──────────────────────
 
 # ────── Qt stuff ──────
@@ -76,7 +60,7 @@ if(BOOT2QT)
     # optimization
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os")
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
-
+    
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_OUTPUT_PREFIX}_Boot2Qt_${QT_VERSION}/v${CMAKE_PROJECT_VERSION} (${CMAKE_PROJECT_DESCRIPTION})")
     set(QT_DEPLOY_PREFIX "/Embi")
 
@@ -133,6 +117,8 @@ add_definitions(
     -DECOSYSTEM_DOMAIN="embi.os"
     -DECOSYSTEM_COPYRIGHT="Copyright © by Embi-OS"
 )
+
+set(TRANSLATION_LUPDATE OFF)
 
 add_subdirectory(libraries)
 add_subdirectory(applications)

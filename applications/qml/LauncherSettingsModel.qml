@@ -124,6 +124,13 @@ StandardObjectModel {
 
     StandardObject {
         group: "300_System"
+        text: qsTr("Launcher")
+        icon: MaterialIcons.rocketLaunch
+        delegate: SettingsAppControllerView {}
+    }
+
+    StandardObject {
+        group: "300_System"
         text: qsTr("Logs")
         icon: MaterialIcons.fileDocumentOutline
         delegate: SettingsLogsView {}

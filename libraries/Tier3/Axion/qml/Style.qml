@@ -28,6 +28,7 @@ QtObject {
 
     readonly property TextTheme textTheme: Theme.textTheme
 
+    readonly property string label: Theme.label
     readonly property string icon: Theme.icon
     readonly property string logo: Theme.logo
     readonly property string splash: Theme.splash
