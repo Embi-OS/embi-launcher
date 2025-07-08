@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.24) # TODO: 3.24
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(QT_CREATOR_SKIP_MAINTENANCE_TOOL_PROVIDER ON)
 
-project(Ecosysteme
+project(Embi-Launcher
     VERSION 1.0.0
     DESCRIPTION "Shared"
     LANGUAGES CXX)
