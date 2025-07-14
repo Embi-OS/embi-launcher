@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.24) # TODO: 3.24
+cmake_minimum_required(VERSION 3.24)
 
 ## Add paths to check for cmake modules:
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(QT_CREATOR_SKIP_MAINTENANCE_TOOL_PROVIDER ON)
 
 project(Embi-Launcher
-    VERSION 1.0.0
+    VERSION 1.0.1
     DESCRIPTION "Shared"
     LANGUAGES CXX)
 
@@ -42,7 +42,7 @@ set(DEPLOYABLE_APPS ${DEPLOYABLE_APPS})
 # ──────────────────────
 
 # ──── Build config ────
-add_definitions(-DQSLOG_FILE_ENABLED)
+# add_definitions(-DQSLOG_FILE_ENABLED)
 # ──────────────────────
 
 # ────── Qt stuff ──────

@@ -42,7 +42,7 @@ T.ProgressBar {
     }
 
     contentItem: Item {
-        implicitWidth: 400
+        implicitWidth: 300
         implicitHeight: root.lineWidth
         scale: root.mirrored ? -1 : 1
 
@@ -73,7 +73,7 @@ T.ProgressBar {
     }
 
     background: Rectangle {
-        implicitWidth: 400
+        implicitWidth: 300
         implicitHeight: root.lineWidth
 
         color: root.backgroundColor

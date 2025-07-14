@@ -119,6 +119,9 @@ bool QUtils::Process::exec(const QString &program, const QStringList &arguments,
 
 bool QUtils::Filesystem::copy(const QString& sourcePath, const QString& destPath, bool force)
 {
+    if(sourcePath==destPath)
+        return true;
+
     QFileInfo src = QFileInfo(sourcePath);
     QFileInfo dst = QFileInfo(destPath);
 
@@ -172,6 +175,9 @@ bool QUtils::Filesystem::copy(const QString& sourcePath, const QString& destPath
 
 bool QUtils::Filesystem::move(const QString& sourcePath, QString destPath, bool force)
 {
+    if(sourcePath==destPath)
+        return true;
+
     QFileInfo src = QFileInfo(sourcePath);
     QFileInfo dst = QFileInfo(destPath);
 

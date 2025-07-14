@@ -23,7 +23,7 @@ PaneTreeView {
 
     ApplicationController {
         id: applicationController
-        onErrorOccurred: (error) => DialogManager.showError(error)
+        onErrorOccurred: error => DialogManager.showError(error)
     }
 
     StandardObjectModel {
@@ -57,6 +57,36 @@ PaneTreeView {
             label: qsTr("Lancer une application")
             icon: MaterialIcons.rocketLaunch
             onClicked: applicationController.launch()
+        }
+        SeparatorTreeDelegate {}
+        SubtitleTreeDelegate {
+            text: qsTr("Eteindre / Redémarrer")
+            FormButtonDelegate {
+                enabled: Power.canShutdown
+                highlighted: true
+                label: qsTr("Eteindre")
+                onClicked: Power.shutdown()
+            }
+            FormButtonDelegate {
+                enabled: Power.canReboot
+                label: qsTr("Redémarrer")
+                onClicked: Power.reboot()
+            }
+            FormButtonDelegate {
+                enabled: Power.canRestart
+                label: qsTr("Relancer")
+                onClicked: Power.restart()
+            }
+            FormButtonDelegate {
+                enabled: Power.canSuspend
+                label: qsTr("Veille")
+                onClicked: Power.suspend()
+            }
+            FormButtonDelegate {
+                enabled: Power.canQuit
+                label: qsTr("Quitter")
+                onClicked: Power.quit()
+            }
         }
     }
 }
