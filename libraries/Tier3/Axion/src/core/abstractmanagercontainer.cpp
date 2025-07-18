@@ -46,8 +46,6 @@ void AbstractManagerContainer::postInit()
 void AbstractManagerContainer::endInit()
 {
     AXIONLOG_INFO()<<qLogLineMessage(QString("%1::ready after %2 ms").arg(managerName()).arg(m_elapsedTimer.nsecsElapsed()/1000000.0),'=');
-
-    Version::Get()->dumpInfos();
 }
 
 bool AbstractManagerContainer::unInit()
@@ -186,6 +184,13 @@ MainManagerContainer::MainManagerContainer(QObject *parent) :
     }
 
     *s_managerContainer = this;
+}
+
+void MainManagerContainer::endInit()
+{
+    AbstractManagerContainer::endInit();
+
+    Version::Get()->dumpInfos();
 }
 
 ManagerContainer::ManagerContainer()

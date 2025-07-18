@@ -4,6 +4,7 @@
 #include "qenumdefs.h"
 #include "qlogdefs.h"
 #include "qoperatordefs.h"
+#include "qprojectdefs.h"
 #include "qpropertydefs.h"
 #include "qsingletondefs.h"
 #include "qtimedefs.h"

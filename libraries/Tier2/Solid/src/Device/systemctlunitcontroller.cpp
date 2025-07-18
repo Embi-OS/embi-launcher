@@ -1,21 +1,21 @@
-#include "systemservicecontroller.h"
+#include "systemctlunitcontroller.h"
 #include "solid_log.h"
 
-SystemServiceController::SystemServiceController(QObject *parent) :
+SystemCtlUnitController::SystemCtlUnitController(QObject *parent) :
     QObject(parent)
 {
-    connect(this, &SystemServiceController::serviceChanged, this, &SystemServiceController::refreshStatus);
+    connect(this, &SystemCtlUnitController::unitChanged, this, &SystemCtlUnitController::refreshStatus);
 }
 
-void SystemServiceController::refreshStatus()
+void SystemCtlUnitController::refreshStatus()
 {
-    checkService();
+    checkUnit();
     checkStatus();
 }
 
-void SystemServiceController::enable()
+void SystemCtlUnitController::enable()
 {
-    if(m_service.isEmpty())
+    if(m_unit.isEmpty())
         return;
 
     setProcessing(true);
@@ -24,16 +24,16 @@ void SystemServiceController::enable()
     QProcess *proc = new QProcess(this);
     connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
         bool ok = (exitCode >= 0);
-        emit this->enableFinished(ok, ok ? QStringLiteral("Service enabled") : proc->readAllStandardError());
+        emit this->enableFinished(ok, ok ? QStringLiteral("Unit enabled") : proc->readAllStandardError());
         proc->deleteLater();
         checkStatus();
     }, Qt::QueuedConnection);
-    proc->start("systemctl", {"enable", "--now", m_service});
+    proc->start("systemctl", {"enable", "--now", m_unit});
 }
 
-void SystemServiceController::disable()
+void SystemCtlUnitController::disable()
 {
-    if(m_service.isEmpty())
+    if(m_unit.isEmpty())
         return;
 
     setProcessing(true);
@@ -42,16 +42,16 @@ void SystemServiceController::disable()
     QProcess *proc = new QProcess(this);
     connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
         bool ok = (exitCode >= 0);
-        emit this->disableFinished(ok, ok ? QStringLiteral("Service disabled") : proc->readAllStandardError());
+        emit this->disableFinished(ok, ok ? QStringLiteral("Unit disabled") : proc->readAllStandardError());
         proc->deleteLater();
         checkStatus();
     }, Qt::QueuedConnection);
-    proc->start("systemctl", {"disable", "--now", m_service});
+    proc->start("systemctl", {"disable", "--now", m_unit});
 }
 
-void SystemServiceController::start()
+void SystemCtlUnitController::start()
 {
-    if(m_service.isEmpty())
+    if(m_unit.isEmpty())
         return;
 
     setProcessing(true);
@@ -60,16 +60,16 @@ void SystemServiceController::start()
     QProcess *proc = new QProcess(this);
     connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
         bool ok = (exitCode >= 0);
-        emit this->enableFinished(ok, ok ? QStringLiteral("Service started") : proc->readAllStandardError());
+        emit this->enableFinished(ok, ok ? QStringLiteral("Unit started") : proc->readAllStandardError());
         proc->deleteLater();
         checkStatus();
     }, Qt::QueuedConnection);
-    proc->start("systemctl", {"start", "--now", m_service});
+    proc->start("systemctl", {"start", "--now", m_unit});
 }
 
-void SystemServiceController::stop()
+void SystemCtlUnitController::stop()
 {
-    if(m_service.isEmpty())
+    if(m_unit.isEmpty())
         return;
 
     setProcessing(true);
@@ -78,45 +78,45 @@ void SystemServiceController::stop()
     QProcess *proc = new QProcess(this);
     connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
         bool ok = (exitCode >= 0);
-        emit this->disableFinished(ok, ok ? QStringLiteral("Service stoped") : proc->readAllStandardError());
+        emit this->disableFinished(ok, ok ? QStringLiteral("Unit stoped") : proc->readAllStandardError());
         proc->deleteLater();
         checkStatus();
     }, Qt::QueuedConnection);
-    proc->start("systemctl", {"stop", "--now", m_service});
+    proc->start("systemctl", {"stop", "--now", m_unit});
 }
 
-QStringList SystemServiceController::services()
+QStringList SystemCtlUnitController::units(const QString& pattern)
 {
     QStringList result;
 
     QProcess proc;
-    proc.start("systemctl", {"list-unit-files", "--no-pager"});
+    if(pattern.isEmpty())
+        proc.start("systemctl", {"list-unit-files", "--no-pager"});
+    else
+        proc.start("bash", {"-c", QString("systemctl list-unit-files --no-pager | grep -E \'%1\'").arg(pattern)});
     proc.waitForFinished();
     int exitCode = proc.exitCode();
     bool ok = (exitCode >= 0);
     const QString output = ok ? proc.readAllStandardOutput() : proc.readAllStandardError();
 
     if (ok) {
-        static QRegularExpression regExp = QRegularExpression("\\s+");
+        static QRegularExpression regExp("\\s+");
         const QStringList lines = output.split('\n');
-        for (const QString& line : lines) {
-            const QString trimmedLine = line.trimmed();
-            if (!trimmedLine.isEmpty() && trimmedLine.contains(".service")) {
-                const QStringList parts = trimmedLine.split(regExp);
-                if (!parts.isEmpty()) {
-                    result.append(parts.first());
-                }
-            }
+        for (const QString& line: lines) {
+            const QStringList parts = line.trimmed().split(regExp);
+            const QString part = parts.first();
+            if (!part.isEmpty() && part.contains('.'))
+                result.append(part);
         }
     }
 
     return result;
 }
 
-void SystemServiceController::checkService()
+void SystemCtlUnitController::checkUnit()
 {
-    if(m_service.isEmpty()) {
-        setServiceExists(false);
+    if(m_unit.isEmpty()) {
+        setUnitExists(false);
         return;
     }
 
@@ -124,16 +124,16 @@ void SystemServiceController::checkService()
     connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
         bool ok = (exitCode >= 0);
         QString output = ok ? proc->readAllStandardOutput() : proc->readAllStandardError();
-        bool exists = output.contains(m_service);
-        setServiceExists(exists);
+        bool exists = output.contains(m_unit);
+        setUnitExists(exists);
         proc->deleteLater();
     });
     proc->start("systemctl", {"list-unit-files", "--no-pager"});
 }
 
-void SystemServiceController::checkStatus()
+void SystemCtlUnitController::checkStatus()
 {
-    if(m_service.isEmpty()) {
+    if(m_unit.isEmpty()) {
         setLoaded(false);
         setActive(false);
         setProcessing(false);
@@ -142,7 +142,7 @@ void SystemServiceController::checkStatus()
 
     setProcessing(true);
 
-    // Query systemctl status for m_service
+    // Query systemctl status for m_unit
     QProcess *proc = new QProcess(this);
     connect(proc, &QProcess::finished, this, [this, proc](int, QProcess::ExitStatus) {
         const QString output =proc->readAllStandardOutput();
@@ -150,16 +150,16 @@ void SystemServiceController::checkStatus()
         parseStatusOutput(output.isEmpty() ? error : output);
         proc->deleteLater();
     });
-    proc->start("systemctl", {"status", m_service, "--no-pager"});
+    proc->start("systemctl", {"status", m_unit, "--no-pager"});
 }
 
-void SystemServiceController::parseStatusOutput(const QString &output)
+void SystemCtlUnitController::parseStatusOutput(const QString &output)
 {
     setStatus(output);
 
     // Example output to parse:
-    // ● <service> - ...
-    //    Loaded: loaded (/lib/systemd/system/<service>; enabled; vendor preset: enabled)
+    // ● <unit> - ...
+    //    Loaded: loaded (/lib/systemd/system/<unit>; enabled; vendor preset: enabled)
     //    Active: active
     //    ...
     bool loaded = output.contains("Loaded: loaded");

@@ -41,6 +41,9 @@ class MainManagerContainer: public AbstractManagerContainer
 
 public:
     explicit MainManagerContainer(QObject *parent = nullptr);
+
+protected:
+    void endInit() override;
 };
 
 struct ManagerContainer

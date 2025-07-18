@@ -40,15 +40,19 @@ PaneTreeView {
         filterValue: true
     }
 
-    SystemServiceController {
+    SystemCtlUnitController {
         id: sshController
-        service: DeviceInfo.isBoot2Qt ? "dropbear.socket" : "ssh.service"
+        Component.onCompleted: {
+            var sshUnits = units("^(ssh|sshd|dropbear)\.")
+            if(sshUnits.length>0)
+                unit = sshUnits[0]
+        }
     }
 
     StandardObjectModel {
         id: treeModel
         FormSwitchDelegate {
-            editable: root.editable && sshController.serviceExists
+            editable: root.editable && sshController.unitExists
             label: qsTr("Chargé")
             leftLabel: qsTr("Off")
             rightLabel: qsTr("On")
@@ -61,7 +65,7 @@ PaneTreeView {
             }
         }
         FormSwitchDelegate {
-            editable: root.editable && sshController.serviceExists
+            editable: root.editable && sshController.unitExists
             enabled: sshController.loaded
             label: qsTr("Actif")
             leftLabel: qsTr("Off")
@@ -83,7 +87,7 @@ PaneTreeView {
         SeparatorTreeDelegate {}
         LabelDelegate {
             font: Style.textTheme.subtitle1
-            text: sshController.status
+            text: sshController.unitExists ? sshController.status : qsTr("Aucun service ssh trouvé")
         }
     }
 }

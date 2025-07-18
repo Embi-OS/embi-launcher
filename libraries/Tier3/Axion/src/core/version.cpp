@@ -3,35 +3,37 @@
 
 Version::Version(QObject *parent) :
     QObject(parent),
-    m_globalVersion(ECOSYSTEM_VERSION_MAJOR, ECOSYSTEM_VERSION_MINOR, ECOSYSTEM_VERSION_PATCH),
-    m_versionSuffix(ECOSYSTEM_DESCRIPTION),
-    m_company(ECOSYSTEM_COMPANY),
-    m_website(ECOSYSTEM_WEBSITE),
-    m_copyright(ECOSYSTEM_COPYRIGHT),
-    m_version(QString("%1 [%2]").arg(m_globalVersion.toString(),m_versionSuffix))
+    m_globalVersion(PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH),
+    m_versionSuffix(PROJECT_DESCRIPTION),
+    m_company(PROJECT_COMPANY),
+    m_website(PROJECT_WEBSITE),
+    m_copyright(PROJECT_COPYRIGHT),
+    m_version(m_versionSuffix.isEmpty() ? QString("%1").arg(m_globalVersion.toString()) : QString("%1 [%2]").arg(m_globalVersion.toString(),m_versionSuffix))
 {
 
 }
 
 void Version::dumpInfos() const
 {
-    QString debugStr;
-    debugStr.append(QString("\n\n"));
-    debugStr.append(qPrintable(QString("\t %1\n").arg(getProductName())));
-    debugStr.append(qPrintable(QString("\t Version: %1 [%2]\n").arg(getGlobalVersion().toString(),getVersionSuffix())));
-    debugStr.append(qPrintable(QString("\t Company: %1 (%2)\n").arg(getCompany(), getWebsite())));
-    debugStr.append(qPrintable(QString("\t %1\n").arg(getCopyright())));
-    AXIONLOG_INFO().noquote()<<debugStr;
+    QString infos;
+    infos += QString("\n\n");
+    infos += m_productName.isEmpty() ? "" : QString("\t %1\n").arg(m_productName);
+    infos += m_version.isEmpty() ? "" : QString("\t Version: %1\n").arg(m_version);
+    infos += m_company.isEmpty() ? "" : QString("\t Company: %1\n").arg(m_company);
+    infos += m_website.isEmpty() ? "" : QString("\t Website: %1\n").arg(m_website);
+    infos += m_copyright.isEmpty() ? "" : QString("\t %1\n").arg(m_copyright);
+    AXIONLOG_INFO().noquote()<<infos;
 }
 
 QString Version::about() const
 {
     QString about;
-    about += tr("Produit")+QString(": %1").arg(getProductName())+"\n";
-    about += tr("Version")+QString(": %1 [%2]").arg(getGlobalVersion().toString(),getVersionSuffix())+"\n";
-    about += tr("Version Qt")+QString(": %1").arg(QT_VERSION_STR)+"\n";
-    about += tr("Entreprise")+QString(": %1 (%2)").arg(getCompany(), getWebsite())+"\n";
-    about += tr("Copyright")+QString(": %1").arg(getCopyright());
+    about += m_productName.isEmpty() ? "" : tr("Produit: %1\n").arg(m_productName);
+    about += m_version.isEmpty() ? "" : tr("Version: %1\n").arg(m_version);
+    about += tr("Version Qt: %1\n").arg(QT_VERSION_STR);
+    about += m_company.isEmpty() ? "" : tr("Entreprise: %1\n").arg(m_company);
+    about += m_website.isEmpty() ? "" : tr("Site web: %1\n").arg(m_website);
+    about += m_copyright.isEmpty() ? "" : tr("Copyright: %1\n").arg(m_copyright);
     return about;
 }
 

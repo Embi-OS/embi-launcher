@@ -12,10 +12,10 @@
 
 static QApplication *createQtApplication(int &argc, char **argv, const QString &applicationName)
 {
-    QGuiApplication::setOrganizationName(ECOSYSTEM_COMPANY);
-    QGuiApplication::setOrganizationDomain(ECOSYSTEM_DOMAIN);
+    QGuiApplication::setOrganizationName(PROJECT_COMPANY);
+    QGuiApplication::setOrganizationDomain(PROJECT_DOMAIN);
     QGuiApplication::setApplicationName(applicationName);
-    QGuiApplication::setApplicationDisplayName(ECOSYSTEM_COPYRIGHT);
+    QGuiApplication::setApplicationDisplayName(PROJECT_COPYRIGHT);
     QGuiApplication::setApplicationVersion(Version::Get()->getVersion());
 
     QQuickStyle::setStyle(QStringLiteral("Material"));
