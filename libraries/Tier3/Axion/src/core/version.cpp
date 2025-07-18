@@ -30,7 +30,7 @@ QString Version::about() const
     QString about;
     about += m_productName.isEmpty() ? "" : tr("Produit: %1\n").arg(m_productName);
     about += m_version.isEmpty() ? "" : tr("Version: %1\n").arg(m_version);
-    about += tr("Version Qt: %1\n").arg(QT_VERSION_STR);
+    about += tr("Version Qt: %1\n").arg(qVersion());
     about += m_company.isEmpty() ? "" : tr("Entreprise: %1\n").arg(m_company);
     about += m_website.isEmpty() ? "" : tr("Site web: %1\n").arg(m_website);
     about += m_copyright.isEmpty() ? "" : tr("Copyright: %1\n").arg(m_copyright);
@@ -41,12 +41,13 @@ QString Version::aboutQt() const
 {
     QString about = QString(
                         "<h2>This program runs on Qt version %1</h2>"
+                        "<p>It was built against Qt version %2</p>"
                         "<p></p>"
                         "<p>Qt is a C++ toolkit for cross-platform application development.</p>"
                         "<p>Qt provides single-source portability across all major desktop "
                         "operating systems. It is also available for embedded Linux and other "
                         "embedded and mobile operating systems.</p>"
-                        ).arg(QT_VERSION_STR);
+                        ).arg(qVersion(), QT_VERSION_STR);
     return about;
 }
 

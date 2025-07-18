@@ -19,6 +19,7 @@ void DeviceInfo::dumpInfos()
     debugStr.append(QString("\n\n"));
     debugStr.append(qPrintable(QString("\t Running on: %1 [%2] arch %3\n").arg(platformName(),platformKernelVersion(), platformCpuArchitecture())));
     debugStr.append(qPrintable(QString("\t Qt Version: %1 [%2]\n").arg(qtVersion(), buildAbi())));
+    debugStr.append(qPrintable(QString("\t Qt Version build: %1\n").arg(qtVersionBuild())));
     debugStr.append(qPrintable(QString("\t Build date: %1 at %2\n").arg(buildDate(), buildTime())));
     AXIONLOG_INFO().noquote()<<debugStr;
 }
@@ -338,6 +339,11 @@ QString DeviceInfo::platformCpuArchitecture()
 QString DeviceInfo::qtVersion()
 {
     return QString(qVersion());
+}
+
+QString DeviceInfo::qtVersionBuild()
+{
+    return QString(QT_VERSION_STR);
 }
 
 QString DeviceInfo::buildDate()

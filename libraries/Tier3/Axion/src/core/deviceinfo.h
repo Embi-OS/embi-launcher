@@ -110,6 +110,7 @@ public:
     static QString platformCpuArchitecture();
 
     static QString qtVersion();
+    static QString qtVersionBuild();
 
     static QString buildDate();
     static QString buildTime();
