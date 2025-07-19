@@ -43,7 +43,7 @@ PaneTreeView {
     SystemCtlUnitController {
         id: sshController
         Component.onCompleted: {
-            var sshUnits = units("^(ssh|sshd|dropbear)\.")
+            var sshUnits = units("^(ssh|sshd|dropbear)\\.")
             if(sshUnits.length>0)
                 unit = sshUnits[0]
         }
