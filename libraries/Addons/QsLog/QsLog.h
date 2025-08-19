@@ -66,6 +66,11 @@ public:
     //! Clear every destinations
     void clearEverything();
 
+    //! Add a filter for log messages; empty pattern disables the filter
+    void addMessageFilter(const QRegularExpression &regex);
+    //! Clears the current filter
+    void clearMessageFilter();
+
 private:
     Logger();
     Logger(const Logger&);            // not available

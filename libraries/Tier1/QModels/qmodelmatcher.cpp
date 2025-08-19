@@ -152,7 +152,7 @@ void QModelMatcher::onModelDataChanged(const QModelIndex &topLeft, const QModelI
         return;
     }
 
-    if(!roles.contains(m_role))
+    if(!roles.isEmpty() && !roles.contains(m_role))
     {
         return;
     }

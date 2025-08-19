@@ -108,7 +108,6 @@ StandardObjectModel {
     }
 
     StandardObject {
-        visible: UBootSettings.canPrintEnv
         group: "300_System"
         text: qsTr("U-Boot")
         icon: MaterialIcons.submarine

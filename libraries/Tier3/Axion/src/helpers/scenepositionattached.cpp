@@ -1,6 +1,7 @@
 #include "scenepositionattached.h"
 #include <QDebug>
 #include <QQuickItem>
+#include <QQuickWindow>
 
 ScenePositionAttached::ScenePositionAttached(QObject *parent)
     : QObject(parent)
@@ -19,6 +20,8 @@ double ScenePositionAttached::x() const
     QQuickItem *item = m_item;
 
     while (item) {
+        if(m_item->window() && item->parentItem()==m_item->window()->contentItem())
+            break;
         x += item->x();
         item = item->parentItem();
     }
@@ -32,6 +35,8 @@ double ScenePositionAttached::y() const
     QQuickItem *item = m_item;
 
     while (item) {
+        if(m_item->window() && item->parentItem()==m_item->window()->contentItem())
+            break;
         y += item->y();
         item = item->parentItem();
     }

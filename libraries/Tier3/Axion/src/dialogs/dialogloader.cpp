@@ -17,6 +17,7 @@ void DialogLoader::clearDialog()
     if(m_dialog.isNull())
         return;
     m_dialog->hide();
+    m_dialog.clear();
     m_active = false;
 }
 

@@ -6,14 +6,12 @@
 
 #define PRINTENV_CMD QStringLiteral("fw_printenv")
 #define SETENV_CMD QStringLiteral("fw_setenv")
+#define OVERLAYS_PATH QStringLiteral("/boot/overlays.txt")
 
-UBootSettings::UBootSettings(QObject *parent) :
-    QObject(parent),
-    m_canPrintEnv(false),
-    m_canSetEnv(false)
+static bool which(const QString& command)
 {
-    QString program="which";
-    QStringList arguments = QStringList()<<PRINTENV_CMD<<SETENV_CMD;
+    const QString program="which";
+    const QStringList arguments = QStringList()<<command;
 
     QProcess process;
     process.setProgram(program);
@@ -22,22 +20,33 @@ UBootSettings::UBootSettings(QObject *parent) :
 
     process.waitForFinished(1000);
 
-    QString processOutput = process.readAllStandardOutput();
+    const QString processOutput = process.readAllStandardOutput();
 
-    if(processOutput.contains(PRINTENV_CMD))
-        m_canPrintEnv = true;
-    if(processOutput.contains(SETENV_CMD))
-        m_canSetEnv = true;
+    return processOutput.contains(command);
+}
+
+UBootSettings::UBootSettings(QObject *parent) :
+    QObject(parent)
+{
+
 }
 
 bool UBootSettings::canPrintEnv()
 {
-    return m_canPrintEnv;
+    static bool canPrintEnv = ::which(SETENV_CMD);
+    return canPrintEnv;
 }
 
 bool UBootSettings::canSetEnv()
 {
-    return m_canSetEnv;
+    static bool canSetEnv = ::which(PRINTENV_CMD);
+    return canSetEnv;
+}
+
+bool UBootSettings::canSetOverlays()
+{
+    static bool canSetOverlays = QFileInfo::exists(OVERLAYS_PATH);
+    return canSetOverlays;
 }
 
 QString UBootSettings::printEnv(const QString& name)
@@ -99,6 +108,57 @@ bool UBootSettings::clearEnv(const QString& name)
     return setEnv(name, "");
 }
 
+QStringList UBootSettings::readOverlays()
+{
+    if(!canSetOverlays())
+    {
+        SOLIDLOG_WARNING()<<"Cannot set overlays";
+        return QStringList();
+    }
+
+    QStringList overlays;
+
+    QFile file(OVERLAYS_PATH);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        SOLIDLOG_WARNING()<<"Cannot open"<<OVERLAYS_PATH;
+        return overlays;
+    }
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.startsWith("fdt_overlays")) {
+            // Remove the "fdt_overlays=" prefix
+            QString fdt_overlays = line.split("=", Qt::SkipEmptyParts).last();
+            // Split on spaces
+            static QRegularExpression regExp = QRegularExpression("\\s+");
+            overlays = fdt_overlays.split(regExp, Qt::SkipEmptyParts);
+            break; // done, we only care about the first occurrence
+        }
+    }
+
+    return overlays;
+}
+
+bool UBootSettings::writeOverlays(const QStringList& overlays)
+{
+    if(!canSetOverlays())
+    {
+        SOLIDLOG_WARNING()<<"Cannot set overlays";
+        return false;
+    }
+
+    QFile file(OVERLAYS_PATH);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        SOLIDLOG_WARNING()<<"Cannot open"<<OVERLAYS_PATH;
+        return false;
+    }
+
+    QTextStream out(&file);
+    out << "fdt_overlays=" << overlays.join(' ');
+    return true;
+}
+
 UBootEnvModel::UBootEnvModel(QObject *parent) :
     QVariantListModel(parent)
 {
@@ -118,7 +178,7 @@ bool UBootEnvModel::doSelect()
         m_selectWatcher->deleteLater();
     }
 
-    if(!UBootSettings::Get()->canPrintEnv())
+    if(!UBootSettings::canPrintEnv())
     {
         emitSelectDone(false);
         return false;
@@ -126,7 +186,7 @@ bool UBootEnvModel::doSelect()
 
     QFuture<QVariantList> future = QtConcurrent::run([]() {
         QVariantList storage;
-        QStringList envs = UBootSettings::Get()->printEnv("").split("\n", Qt::SkipEmptyParts);
+        QStringList envs = UBootSettings::printEnv("").split("\n", Qt::SkipEmptyParts);
         envs.sort();
         for(const QString& env: std::as_const(envs))
         {

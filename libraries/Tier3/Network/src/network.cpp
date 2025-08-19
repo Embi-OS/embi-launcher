@@ -37,6 +37,40 @@ QNetworkInformation* Network::netInfo()
     return s_netInfoInstance;
 }
 
+QString Network::reachabilityAsString(QNetworkInformation::Reachability reachability)
+{
+    QString ret = "?????";
+    switch (reachability) {
+    case QNetworkInformation::Reachability::Unknown: ret = "UNKNOWN"; break;
+    case QNetworkInformation::Reachability::Disconnected: ret = "DISCONNECTED"; break;
+    case QNetworkInformation::Reachability::Local: ret = "LOCAL"; break;
+    case QNetworkInformation::Reachability::Site: ret = "SITE"; break;
+    case QNetworkInformation::Reachability::Online: ret = "ONLINE"; break;
+    default: break;
+    }
+
+    // reachability.append("\n(Can be UNKNOWN, DISCONNECTED, LOCAL, SITE, ONLINE)");
+
+    return ret;
+}
+
+QString Network::transportMediumAsString(QNetworkInformation::TransportMedium transportMedium)
+{
+    QString ret = "?????";
+    switch (transportMedium) {
+    case QNetworkInformation::TransportMedium::Unknown: ret = "UNKNOWN"; break;
+    case QNetworkInformation::TransportMedium::Ethernet: ret = "ETHERNET"; break;
+    case QNetworkInformation::TransportMedium::Cellular: ret = "CELLULAR"; break;
+    case QNetworkInformation::TransportMedium::WiFi: ret = "WIFI"; break;
+    case QNetworkInformation::TransportMedium::Bluetooth: ret = "BLUETOOTH"; break;
+    default: break;
+    }
+
+    // transportMedium.append("\n(Can be UNKNOWN, ETHERNET, CELLULAR, WIFI, BLUETOOTH)");
+
+    return ret;
+}
+
 QString Network::backend()
 {
     if(!netInfo())
@@ -53,38 +87,14 @@ QString Network::reachability()
     if(!netInfo() || !netInfo()->supportedFeatures().testFlag(QNetworkInformation::Feature::Reachability))
         return "N/A";
 
-    QString reachability = "?????";
-    switch (netInfo()->reachability()) {
-    case QNetworkInformation::Reachability::Unknown: reachability = "UNKNOWN"; break;
-    case QNetworkInformation::Reachability::Disconnected: reachability = "DISCONNECTED"; break;
-    case QNetworkInformation::Reachability::Local: reachability = "LOCAL"; break;
-    case QNetworkInformation::Reachability::Site: reachability = "SITE"; break;
-    case QNetworkInformation::Reachability::Online: reachability = "ONLINE"; break;
-    default: break;
-    }
-
-    // reachability.append("\n(Can be UNKNOWN, DISCONNECTED, LOCAL, SITE, ONLINE)");
-
-    return reachability;
+    return Network::reachabilityAsString(netInfo()->reachability());
 }
 QString Network::transportMedium()
 {
     if(!netInfo() || !netInfo()->supportedFeatures().testFlag(QNetworkInformation::Feature::TransportMedium))
         return "N/A";
 
-    QString transportMedium = "?????";
-    switch (netInfo()->transportMedium()) {
-    case QNetworkInformation::TransportMedium::Unknown: transportMedium = "UNKNOWN"; break;
-    case QNetworkInformation::TransportMedium::Ethernet: transportMedium = "ETHERNET"; break;
-    case QNetworkInformation::TransportMedium::Cellular: transportMedium = "CELLULAR"; break;
-    case QNetworkInformation::TransportMedium::WiFi: transportMedium = "WIFI"; break;
-    case QNetworkInformation::TransportMedium::Bluetooth: transportMedium = "BLUETOOTH"; break;
-    default: break;
-    }
-
-    // transportMedium.append("\n(Can be UNKNOWN, ETHERNET, CELLULAR, WIFI, BLUETOOTH)");
-
-    return transportMedium;
+    return Network::transportMediumAsString(netInfo()->transportMedium());
 }
 QString Network::captivePortal()
 {
@@ -193,7 +203,7 @@ QString Network::getDomain()
 
 bool Network::waitForReachability(QNetworkInformation::Reachability reachability, int timeout)
 {
-    if(!netInfo() || !netInfo()->supportedFeatures().testFlag(QNetworkInformation::Feature::Reachability))
+    if(!netInfo() || !netInfo()->supports(QNetworkInformation::Feature::Reachability))
     {
         SOLIDLOG_WARNING()<<"Network reachability can not be determined";
         return true;
@@ -201,7 +211,7 @@ bool Network::waitForReachability(QNetworkInformation::Reachability reachability
 
     if(netInfo()->reachability()>=reachability)
     {
-        SOLIDLOG_INFO()<<"Network reachability is already"<<netInfo()->reachability();
+        SOLIDLOG_INFO()<<"Network reachability is"<<netInfo()->reachability();
         return true;
     }
 
@@ -228,8 +238,16 @@ bool Network::waitForReachability(QNetworkInformation::Reachability reachability
             loop.exit(1);
     });
 
+    QTimer debug;
+    debug.setInterval(1000);
+    debug.setSingleShot(false);
+    auto conn3 = connect(&debug, &QTimer::timeout, netInfo(), [&]() {
+        SOLIDLOG_INFO()<<"Wait for network reachability - remaining time:"<<qRound(timer.remainingTime()/1000.0)<<"sec";
+    });
+
     elapsed.start();
     timer.start();
+    debug.start();
     int result = loop.exec();
 
     QObject::disconnect(conn1);

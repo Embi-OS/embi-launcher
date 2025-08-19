@@ -23,11 +23,15 @@ PaneTreeView {
         id: ubootEnvs
     }
 
+    UBootSettings {
+        id: ubootSettings
+    }
+
     StandardObjectModel {
         id: treeModel
         FormComboBoxDelegate {
             editable: root.editable
-            visible: UBootSettings.canSetEnv
+            visible: ubootSettings.canSetEnv
             label: "fdtfile"
             infos: "Main device-tree"
             options: FolderTreeModel {
@@ -38,15 +42,22 @@ PaneTreeView {
             textRole: "text"
             mandatory: false
 
-            value: UBootSettings.printEnv("fdtfile")
+            value: ubootSettings.printEnv("fdtfile")
             onAccepted: (value) => {
                 if(value!=='undefined')
-                    UBootSettings.setEnv("fdtfile", value);
+                    ubootSettings.setEnv("fdtfile", value);
                 else
-                    UBootSettings.clearEnv("fdtfile");
+                    ubootSettings.clearEnv("fdtfile");
                 ubootEnvs.select();
                 AxionHelper.warningReboot();
             }
+        }
+        SeparatorTreeDelegate {}
+        FormInfoDelegate {
+            visible: ubootSettings.canSetOverlays
+            label: "Overlays"
+            valueType: FormValueTypes.List
+            value: ubootSettings.readOverlays()
         }
         SeparatorTreeDelegate {}
         FormButtonDelegate {

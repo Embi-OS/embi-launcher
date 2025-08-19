@@ -28,7 +28,10 @@ BasicStackView {
     function pushObject(obj: BasicNavObject) {
         Log.startElapsed()
         obj.index = root.depth;
-        obj.item = root.pushItem(obj.navItem, obj.properties) as BasicNavItem
+        if(obj.properties)
+            obj.item = root.pushItem(obj.navItem, obj.properties) as BasicNavItem
+        else
+            obj.item = root.pushItem(obj.navItem) as BasicNavItem
         obj.properties = null
         Log.trace(("pushObject took: %1 ms").arg(Log.elapsed()))
     }
@@ -36,7 +39,10 @@ BasicStackView {
     function replaceCurrentObject(obj: BasicNavObject) {
         Log.startElapsed()
         obj.index = root.depth-1;
-        obj.item = root.replaceCurrentItem(obj.navItem, obj.properties) as BasicNavItem
+        if(obj.properties)
+            obj.item = root.replaceCurrentItem(obj.navItem, obj.properties) as BasicNavItem
+        else
+            obj.item = root.replaceCurrentItem(obj.navItem) as BasicNavItem
         obj.properties = null
         Log.trace(("replaceCurrentObject took: %1 ms").arg(Log.elapsed()))
     }

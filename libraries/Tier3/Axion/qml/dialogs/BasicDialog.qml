@@ -36,8 +36,8 @@ T.Dialog {
     implicitWidth: fullScreen ? maximumWidth : Math.ceil(Math.min(maximumWidth, Math.max(dialogImplicitWidth,preferredWidth)))
     implicitHeight: fullScreen ? maximumHeight : Math.ceil(Math.min(maximumHeight, Math.max(dialogImplicitHeight,preferredHeight)))
 
-    x: Math.floor((parentWidth - width) / 2) - parent.ScenePosition.x
-    y: Math.floor((parentHeight - height) / 2) - parent.ScenePosition.y
+    x: Math.floor((parentWidth - width) / 2)
+    y: Math.floor((parentHeight - height) / 2)
 
     property double inset: 0
     topInset: inset

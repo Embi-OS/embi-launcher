@@ -21,6 +21,7 @@ T.AbstractButton {
 
     property bool authorizeEmpty: true
     property bool authorizeGlobal: true
+    property list<var> editableValues: []
     property string placeholderText
     property color placeholderTextColor: ColorUtils.transparent(colorValue, 0.4)
 
@@ -148,6 +149,9 @@ T.AbstractButton {
     property Component delegate: ComboCheckBoxItem {
         required property var model
         required property int index
+
+        readonly property var value: model[root.valueRole]
+        enabled: root.editableValues.length===0 || root.editableValues.includes(value)
 
         width: ListView.view.width
         text: model[root.textRole]

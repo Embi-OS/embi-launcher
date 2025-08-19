@@ -6,6 +6,4 @@ Rectangle {
 
     color: ColorUtils.transparent(Style.colorBlack,0.5)
     anchors.fill: parent
-
-    rotation: Window.window?.contentRotation ?? 0
 }

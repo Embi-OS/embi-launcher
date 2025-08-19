@@ -31,14 +31,11 @@ Item {
 
     Loader {
         id: loader
+        active: root.isVisible
         onStatusChanged: {
             if (loader.status===Loader.Ready) {
                 root.tryOpen()
             }
-        }
-        Binding on active {
-            delayed: true
-            value: root.isVisible
         }
         sourceComponent: root.type===DialogTypes.Action ? dialogAction :
                          root.type===DialogTypes.Text ? dialogText :

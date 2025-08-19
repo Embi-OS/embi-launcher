@@ -6,19 +6,17 @@ Item {
     id: root
 
     z: Infinity
-    anchors.fill: parent
     visible: root.enabled
 
     property int size: 60
 
     property color color: Style.colorVariant
 
-    readonly property Window rootWindow: Window.window as Window
+    property alias window: mouseEventNotifier.window
 
     MouseEventNotifier {
         id: mouseEventNotifier
         enabled: root.enabled
-        window: root.rootWindow
         onMousePressed: clickAnimation.restart()
     }
 

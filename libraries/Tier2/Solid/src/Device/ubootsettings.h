@@ -3,38 +3,34 @@
 
 #include <QDefs>
 #include <QModels>
-#include "qsingleton.h"
 
 #include <QFutureWatcher>
 
-class UBootSettings : public QObject,
-                      public QQmlSingleton<UBootSettings>
+class UBootSettings : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
-    QML_SINGLETON
 
-    Q_PROPERTY(bool canPrintEnv READ canPrintEnv NOTIFY capabilitiesChanged FINAL)
-    Q_PROPERTY(bool canSetEnv   READ canSetEnv   NOTIFY capabilitiesChanged FINAL)
-
-protected:
-    friend QQmlSingleton<UBootSettings>;
-    explicit UBootSettings(QObject *parent = nullptr);
+    Q_PROPERTY(bool canPrintEnv    READ canPrintEnv    NOTIFY capabilitiesChanged FINAL)
+    Q_PROPERTY(bool canSetEnv      READ canSetEnv      NOTIFY capabilitiesChanged FINAL)
+    Q_PROPERTY(bool canSetOverlays READ canSetOverlays NOTIFY capabilitiesChanged FINAL)
 
 public:
-    bool canPrintEnv();
-    bool canSetEnv();
+    explicit UBootSettings(QObject *parent = nullptr);
 
-    Q_INVOKABLE QString printEnv(const QString& name);
-    Q_INVOKABLE bool setEnv(const QString& name, const QString& value);
-    Q_INVOKABLE bool clearEnv(const QString& name);
+    static bool canPrintEnv();
+    static bool canSetEnv();
+    static bool canSetOverlays();
+
+    Q_INVOKABLE static QString printEnv(const QString& name);
+    Q_INVOKABLE static bool setEnv(const QString& name, const QString& value);
+    Q_INVOKABLE static bool clearEnv(const QString& name);
+
+    Q_INVOKABLE static QStringList readOverlays();
+    Q_INVOKABLE static bool writeOverlays(const QStringList& overlays);
 
 signals:
     void capabilitiesChanged();
-
-private:
-    bool m_canPrintEnv;
-    bool m_canSetEnv;
 };
 
 class UBootEnvModel: public QVariantListModel

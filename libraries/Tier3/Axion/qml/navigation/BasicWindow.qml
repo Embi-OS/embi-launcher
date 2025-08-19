@@ -71,6 +71,13 @@ Window {
     signal applicationLoaded()
 
     contentItem.rotation: contentRotation
+    Overlay.overlay.anchors.fill: overlayPosition
+    Item {
+        id: overlayPosition
+        width: root.contentWidth
+        height: root.contentHeight
+        anchors.centerIn: parent
+    }
 
 //──────────────────────────────────────────────────────────────────────
 // Loader Splashscreen
@@ -78,7 +85,6 @@ Window {
 
     Loadable {
         id: splashScreenLoader
-        parent: root.contentItem
         anchors.centerIn: parent
         width: root.contentWidth
         height: root.contentHeight
@@ -100,7 +106,6 @@ Window {
 
     Loadable {
         id: appLoader
-        parent: root.contentItem
         anchors.centerIn: parent
         width: root.contentWidth
         height: root.contentHeight

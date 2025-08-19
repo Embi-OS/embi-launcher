@@ -206,7 +206,7 @@ void AlarmObject::invalidateRemainingTimeChange()
 
     if(m_timer->isActive() && qAbs(m_timer->remainingTime()-m_msToNextRingTime)>1000)
     {
-        AXIONLOG_WARNING()<<"AlarmObject.remainingTime differs from msToNextRingTime";
+        AXIONLOG_WARNING()<<"AlarmObject.remainingTime differs from msToNextRingTime:"<<qAbs(m_timer->remainingTime()-m_msToNextRingTime)/1000.0<<"sec";
         m_timer->start(m_msToNextRingTime);
     }
 

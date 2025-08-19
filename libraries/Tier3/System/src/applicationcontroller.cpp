@@ -195,6 +195,14 @@ void ApplicationController::install(const QString& path)
     auto future = QtConcurrent::run([defer, path]() mutable {
 
         const QFileInfo fileInfo = QFileInfo(path);
+        if(fileInfo.fileName()==Paths::applicationName())
+        {
+            const QString infos = tr("Impossible de réinstaller l'applicaiton actuelle");
+            const QString traces = tr("Il est préférable d'utiliser la fonction de mise à jour");
+            defer.reject(0, infos, traces);
+            return;
+        }
+
         const QFileInfo currentpath = QFileInfo(QCoreApplication::applicationFilePath());
         QDir installDir = QDir(currentpath.absolutePath());
         installDir.cdUp();
@@ -226,22 +234,22 @@ void ApplicationController::install(const QString& path)
 
     });
 
-    defer.complete([this, dialog](bool result, int, const QString& infos, const QString& installFilePath) {
+    defer.complete([this, dialog](bool result, int, const QString& infos, const QString& traces) {
         dialog->hide();
 
         QVariantMap settings;
         settings["title"] = result ? tr("Installation terminée") : tr("Erreur lors de l'installation");
         settings["message"] = result ? tr("Voulez-vous lancer l'application?") : "";
         settings["infos"] = infos;
-        settings["traces"] = installFilePath;
+        settings["traces"] = traces;
         settings["severity"] = result ? DialogSeverities::Message : DialogSeverities::Error;
         settings["buttonAccept"] = result ? tr("Lancer") : tr("Fermer");
         settings["buttonReject"] = result ? tr("Fermer") : "";
         settings["diagnose"] = false;
         DialogObject* action = DialogManager::Get()->showAction(settings);
         if(result) {
-            action->onAccepted([this, installFilePath](){
-                launch(installFilePath);
+            action->onAccepted([this, traces](){
+                launch(traces);
             });
         }
     });

@@ -16,6 +16,7 @@ void MethodRole::componentComplete()
 
 void MethodRole::updateRoles(const QQmlSortFilterProxyModel& proxyModel)
 {
+    m_parameterRoles.clear();
     for(const QByteArray& parameterName: std::as_const(m_parameterNames))
     {
         if(parameterName=="model")

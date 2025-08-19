@@ -7,7 +7,7 @@ import Eco.Tier3.System
 PaneTreeView {
     id: root
 
-    title: "U-Boot"
+    title: "SSH"
 
     model: proxyModel
 

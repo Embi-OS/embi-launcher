@@ -12,6 +12,7 @@ BasicFormBackground {
     property alias valueRole: comboCheckList.valueRole
     property alias authorizeEmpty: comboCheckList.authorizeEmpty
     property alias authorizeGlobal: comboCheckList.authorizeGlobal
+    property alias editableValues: comboCheckList.editableValues
     property alias currentIndexes: comboCheckList.currentIndexes
     property alias currentValues: comboCheckList.currentValues
     property alias currentTexts: comboCheckList.currentTexts

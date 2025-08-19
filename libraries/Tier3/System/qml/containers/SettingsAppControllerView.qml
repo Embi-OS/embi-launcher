@@ -54,6 +54,12 @@ PaneTreeView {
         }
         FormButtonDelegate {
             enabled: root.editable
+            label: qsTr("Installer une application")
+            icon: MaterialIcons.applicationImport
+            onClicked: applicationController.install()
+        }
+        FormButtonDelegate {
+            enabled: root.editable
             label: qsTr("Lancer une application")
             icon: MaterialIcons.rocketLaunch
             onClicked: applicationController.launch()

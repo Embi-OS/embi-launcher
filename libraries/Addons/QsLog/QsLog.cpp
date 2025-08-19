@@ -33,6 +33,7 @@
 #include <QVector>
 #include <QDateTime>
 #include <QtGlobal>
+#include <QRegularExpression>
 
 namespace QsLogging
 {
@@ -143,6 +144,7 @@ public:
     DestinationList destList;
     bool includeTimeStamp;
     bool includeLogLevel;
+    QList<QRegularExpression> messageFilter;
 };
 
 #ifdef QS_LOG_SEPARATE_THREAD
@@ -273,6 +275,16 @@ void Logger::clearEverything()
     enqueueClear();
 }
 
+void Logger::addMessageFilter(const QRegularExpression &regex)
+{
+    d->messageFilter.append(regex);
+}
+
+void Logger::clearMessageFilter()
+{
+    d->messageFilter.clear(); // empty (invalid) regex => no filtering
+}
+
 //! directs the message to the task queue or writes it directly
 void Logger::enqueueWrite(const Message& message)
 {
@@ -289,6 +301,15 @@ void Logger::enqueueWrite(const Message& message)
 void Logger::write(const Message& message)
 {
     QMutexLocker lock(&d->logMutex);
+
+    // If a filter is set and it does match, discard message
+    for(const QRegularExpression& re: std::as_const(d->messageFilter)) {
+        if (re.isValid() && !re.pattern().isEmpty()) {
+            if (!re.match(message.message).hasMatch()) {
+                return; // skip logging
+            }
+        }
+    }
 
     if (d->level > message.level)
         return;

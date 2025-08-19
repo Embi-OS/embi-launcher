@@ -18,8 +18,9 @@ void QMouseEventNotifier::componentComplete()
 
 bool QMouseEventNotifier::eventFilter(QObject *obj, QEvent *event)
 {
-    if(!m_enabled || !event || obj!=m_window)
+    if(!m_enabled || !event || obj!=m_window) {
         return QObject::eventFilter(obj, event);
+    }
 
     if(event->type() == QEvent::MouseButtonPress ||
        event->type() == QEvent::MouseButtonRelease ||
@@ -33,9 +34,11 @@ bool QMouseEventNotifier::eventFilter(QObject *obj, QEvent *event)
         QPointF scenePosition;
         if(QPointerEvent *pointerEvent = dynamic_cast<QPointerEvent *>(event))
         {
-            for(const QEventPoint& eventPoint: pointerEvent->points())
+            const QList<QEventPoint> points = pointerEvent->points();
+            for(const QEventPoint& eventPoint: points) {
                 scenePosition += eventPoint.scenePosition();
-            scenePosition/=(float)pointerEvent->points().size();
+            }
+            scenePosition/=(float)points.size();
         }
         setScenePosition(scenePosition);
 

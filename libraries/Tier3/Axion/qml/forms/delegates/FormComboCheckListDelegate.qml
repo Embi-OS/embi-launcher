@@ -16,6 +16,7 @@ FormObject {
     property string valueRole: textRole
     property bool isSorted: false
     property bool authorizeGlobal: true
+    property list<var> editableValues: []
     property string globalText: qsTr("Select all")
     property string separator: "; "
     property bool mandatory: false
@@ -41,6 +42,7 @@ FormObject {
         editable: root.editable
         authorizeEmpty: !root.mandatory
         authorizeGlobal: root.authorizeGlobal
+        editableValues: root.editableValues
         globalText: root.globalText
         separator: root.separator
 

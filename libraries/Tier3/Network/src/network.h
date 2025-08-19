@@ -34,6 +34,9 @@ protected:
 public:
     static QNetworkInformation* netInfo();
 
+    Q_INVOKABLE static QString reachabilityAsString(QNetworkInformation::Reachability reachability);
+    Q_INVOKABLE static QString transportMediumAsString(QNetworkInformation::TransportMedium transportMedium);
+
     static QString backend();
     static QString reachability();
     static QString transportMedium();

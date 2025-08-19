@@ -75,6 +75,7 @@ void QNetworkPing::ping(const QString &address, const QObject* context, std::fun
 
         if(exitCode!=0 && timeout>elapsed)
         {
+            QUTILSLOG_INFO()<<"Try to ping"<<address<<"- remaining time:"<<qRound((timeout-elapsed)/1000.0)<<"sec";
             QNetworkPing::ping(address, context, callback, timeout-elapsed, interval);
             return;
         }

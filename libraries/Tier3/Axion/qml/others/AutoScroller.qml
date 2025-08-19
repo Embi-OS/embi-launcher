@@ -41,7 +41,7 @@ QtObject {
         if(!flickable || !root.enabled)
             return
 
-        if (root.keyboardVisible && root.inputItem && flickable && flickable.visible && flickable.interactive) {
+        if (root.inputItem && flickable && flickable.visible && flickable.interactive) {
 
             var verticallyFlickable = (flickable.flickableDirection === Flickable.HorizontalAndVerticalFlick || flickable.flickableDirection === Flickable.VerticalFlick
                                        || (flickable.flickableDirection === Flickable.AutoFlickDirection && flickable.contentHeight > (flickable.height - flickable.topMargin - flickable.bottomMargin))

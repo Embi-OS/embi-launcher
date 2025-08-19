@@ -15,6 +15,7 @@ embi_add_qml_module(${PROJECT_NAME}
     PLUGINS
         Axion
     QML_DEPENDENCIES
+        QtNetwork
         Eco.Tier3.Axion
     QML_IMPORTS
         Eco.Tier2.Solid

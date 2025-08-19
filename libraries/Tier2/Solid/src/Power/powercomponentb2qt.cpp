@@ -27,6 +27,7 @@ void PowerComponentB2qt::quit()
 void PowerComponentB2qt::restart()
 {
     QMetaObject::invokeMethod(qApp, [](){
+        ::sync();
         qApp->quit();
         QProcess::startDetached("appcontroller", QStringList("--restart"));
     }, Qt::QueuedConnection);
@@ -35,6 +36,7 @@ void PowerComponentB2qt::restart()
 void PowerComponentB2qt::shutdown()
 {
     QMetaObject::invokeMethod(qApp, [](){
+        ::sync();
         qApp->quit();
         QProcess::startDetached("shutdown", QStringList("now"));
     }, Qt::QueuedConnection);
@@ -43,6 +45,7 @@ void PowerComponentB2qt::shutdown()
 void PowerComponentB2qt::reboot()
 {
     QMetaObject::invokeMethod(qApp, [](){
+        ::sync();
         qApp->quit();
         QProcess::startDetached("reboot", {});
     }, Qt::QueuedConnection);
@@ -51,6 +54,7 @@ void PowerComponentB2qt::reboot()
 void PowerComponentB2qt::launch(const QString& path)
 {
     QMetaObject::invokeMethod(qApp, [path](){
+        ::sync();
         qApp->quit();
         QProcess::startDetached("appcontroller", QStringList({"--detach", path}));
     }, Qt::QueuedConnection);

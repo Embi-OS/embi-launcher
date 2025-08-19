@@ -16,6 +16,14 @@ PaneTreeView {
         tick: (netSubtree.visible&&netSubtree.unfolded) ? 1000 : 0
     }
 
+    ModelMatcher {
+        id: matcher
+        delayed: true
+        sourceModel: NetworkSettingsManager.interfaces
+        roleName: "state"
+        value: NetworkSettingsState.Online
+    }
+
     StandardObjectModel {
         id: treeModel
         InfoTreeDelegate {text: qsTr("Adresse IPv4 Ethernet");info: Network.ethernetIPv4Address}
@@ -33,6 +41,13 @@ PaneTreeView {
             InfoTreeDelegate {text: "Transport medium";info: Network.transportMedium}
             InfoTreeDelegate {text: "Is behind captive portal";info: Network.captivePortal}
             InfoTreeDelegate {text: "Is metered";info: Network.metered}
+
+            SubtitleTreeDelegate {
+                text: "NetworkSettingsInformation"
+                InfoTreeDelegate {text: "Initialized";info: NetworkSettingsInformation.isInitialized}
+                InfoTreeDelegate {text: "Reachability";info: Network.reachabilityAsString(NetworkSettingsInformation.reachability)}
+                InfoTreeDelegate {text: "Transport medium";info: Network.transportMediumAsString(NetworkSettingsInformation.transportMedium)}
+            }
         }
 
         SubtitleTreeDelegate {
