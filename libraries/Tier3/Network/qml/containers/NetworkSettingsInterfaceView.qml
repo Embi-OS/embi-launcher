@@ -86,7 +86,7 @@ PaneListView {
                 model.destroy();
             },
             "onFormValidated": function(formValues) {
-                service.setupIpv4Config();
+                service.setupIpv4Config()
             }
         }
 
@@ -141,6 +141,7 @@ PaneListView {
         required state
         required signalStrength
         required connected
+        required mac
         connectionState: entry?.state ?? NetworkSettingsState.Undefined
 
         canEdit: root.editable

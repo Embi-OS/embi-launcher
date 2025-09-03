@@ -10,6 +10,7 @@ BasicItemDelegate {
     property bool canEdit: true
 
     property string name: ""
+    property string mac: ""
     property string identifier: ""
     property string iface: ""
     property int type: NetworkSettingsType.Unknown

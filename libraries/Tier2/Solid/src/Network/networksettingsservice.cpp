@@ -275,6 +275,21 @@ NetworkSettingsProxy* NetworkSettingsService::proxy()
 }
 
 /*!
+    \qmlproperty NetworkSettingsEthernet NetworkService::ethernetConfig
+    \readonly
+    \brief Holds the ethernet configuration for this service.
+*/
+
+/*!
+    Returns the ethernet configuration of the network service.
+*/
+NetworkSettingsEthernet* NetworkSettingsService::ethernetConfig()
+{
+    Q_D(NetworkSettingsService);
+    return &d->m_ethernetConfig;
+}
+
+/*!
     \qmlproperty NetworkSettingsWireless NetworkService::wirelessConfig
     \readonly
     \brief Holds the wireless configuration for this service.
@@ -396,6 +411,51 @@ QAbstractItemModel* NetworkSettingsService::nameservers()
 }
 
 /*!
+    \qmlproperty object NetworkService::timeservers
+    \readonly
+    \brief The model containing the time servers associated with this
+           service.
+
+    The \e timeservers property can be used as a model for a view
+    that lists the time server addresses associated with this
+    service.
+
+    \sa timeservers.count, timeservers.append(), timeservers.remove(), timeservers.resetChanges()
+*/
+
+/*!
+    \qmlproperty int NetworkService::timeservers.count
+    \readonly
+    \brief Holds the number of domain name server addresses in the
+           \l timeservers model.
+*/
+
+/*!
+   \qmlmethod void NetworkService::timeservers.append(string address)
+   \brief Adds \a address into the \l timeservers model.
+*/
+
+/*!
+   \qmlmethod void NetworkService::timeservers.remove(int index)
+   \brief Removes the entry at index \a index from the \l timeservers model.
+*/
+
+/*!
+   \qmlmethod void NetworkService::timeservers.resetChanges()
+   \brief Clears unsaved changes from the \l timeservers model.
+*/
+
+/*!
+    Returns the model containing the time servers associated with this
+    network service.
+*/
+QAbstractItemModel* NetworkSettingsService::timeservers()
+{
+    Q_D(NetworkSettingsService);
+    return &d->m_timeserverConfig;
+}
+
+/*!
     \qmlmethod void NetworkService::setupIpv4Config()
     \brief Sets up the IPv4 configuration.
 
@@ -437,6 +497,28 @@ void NetworkSettingsService::setupIpv6Config()
 {
     Q_D(NetworkSettingsService);
     d->setupIpv6Config();
+}
+
+/*!
+    \qmlmethod void NetworkService::setupNameserversConfig()
+    \brief Sets up the time server configuration.
+
+    Call this method after modifying the list of time servers.
+
+    \sa timeservers
+*/
+
+/*!
+    Sets up the time server configuration.
+
+    Call this method after changing the time server settings.
+
+    \sa timeservers
+*/
+void NetworkSettingsService::setupTimeserversConfig()
+{
+    Q_D(NetworkSettingsService);
+    d->setupTimeserversConfig();
 }
 
 /*!

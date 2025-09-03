@@ -44,6 +44,7 @@ NetworkSettingsServiceModel::NetworkSettingsServiceModel(QObject *parent)
     m_roleNames.insert(Connected, "connected");
     m_roleNames.insert(Interface, "iface");
     m_roleNames.insert(Address, "address");
+    m_roleNames.insert(MAC, "mac");
 }
 
 /*!
@@ -95,6 +96,9 @@ QVariant NetworkSettingsServiceModel::data(const QModelIndex & index, int role) 
     else if (role == Identifier) {
         return item->id();
     }
+    else if (role == MAC) {
+        return item->ethernetConfig()->getAddress();
+    }
     else if (role == SignalStrength) {
         return item->wirelessConfig()->signalStrength();
     }
@@ -102,20 +106,7 @@ QVariant NetworkSettingsServiceModel::data(const QModelIndex & index, int role) 
         return item->state() == NetworkSettingsState::Online || item->state() == NetworkSettingsState::Ready;
     }
     else if (role == Interface) {
-#ifndef QT_NO_NETWORKINTERFACE
-        const QList<QNetworkInterface> ifs = QNetworkInterface::allInterfaces();
-        for(const QNetworkInterface& iface : ifs)
-        {
-            const QList<QNetworkAddressEntry> entries = iface.addressEntries();
-            for(const QNetworkAddressEntry& entry : entries)
-            {
-                if(entry.ip().toString()==item->ipv4()->getAddress()) {
-                    return iface.name();
-                }
-            }
-        }
-#endif
-        return "N/A";
+        return item->ethernetConfig()->getInterface();
     }
     else if (role == Address) {
         if(item->ipv4())
@@ -185,6 +176,7 @@ void NetworkSettingsServiceModel::connectStateChanges(NetworkSettingsService* it
     connect(item, &NetworkSettingsService::nameChanged, this, &NetworkSettingsServiceModel::connectionStatusChanged);
     connect(item, &NetworkSettingsService::ipv4Changed, this, &NetworkSettingsServiceModel::connectionStatusChanged);
     connect(item, &NetworkSettingsService::ipv6Changed, this, &NetworkSettingsServiceModel::connectionStatusChanged);
+    connect(item, &NetworkSettingsService::ethernetChanged, this, &NetworkSettingsServiceModel::connectionStatusChanged);
 
     NetworkSettingsWireless* wireless = item->wirelessConfig();
     if (wireless)
@@ -240,7 +232,7 @@ void NetworkSettingsServiceModel::updated(int row)
 NetworkSettingsService* NetworkSettingsServiceModel::getByName(const QString& name)
 {
     NetworkSettingsService* ret = nullptr;
-    for (NetworkSettingsService* item: m_items) {
+    for (NetworkSettingsService* item: std::as_const(m_items)) {
         if (item->name() == name) {
             ret = item;
             break;
@@ -265,7 +257,7 @@ void NetworkSettingsServiceModel::connectionStatusChanged()
     NetworkSettingsService *s = qobject_cast<NetworkSettingsService*>(sender());
 
     int row = 0;
-    for (NetworkSettingsService* item: m_items) {
+    for (NetworkSettingsService* item: std::as_const(m_items)) {
         if (item == s) {
             updated(row);
             break;
@@ -282,7 +274,7 @@ void NetworkSettingsServiceModel::signalStrengthChanged()
 {
     NetworkSettingsWireless *s = qobject_cast<NetworkSettingsWireless*>(sender());
     int row = 0;
-    for (NetworkSettingsService* item: m_items) {
+    for (NetworkSettingsService* item: std::as_const(m_items)) {
         if (item->wirelessConfig() == s) {
             updated(row);
             break;
@@ -421,7 +413,7 @@ QVariant NetworkSettingsServiceFilter::itemFromRow(const int row) const
             return serviceItem;
         }
     }
-    return QVariant::fromValue(QStringLiteral(""));
+    return QVariant::fromValue(QString(""));
 }
 
 /*!
@@ -438,7 +430,7 @@ QVariant NetworkSettingsServiceFilter::itemFromRow(const int row) const
 int NetworkSettingsServiceFilter::activeRow() const
 {
     NetworkSettingsServiceModel* model = qobject_cast<NetworkSettingsServiceModel*>(sourceModel());
-    QList<NetworkSettingsService*> data = model->getModel();
+    const QList<NetworkSettingsService*> data = model->getModel();
     int row = 0;
     for (NetworkSettingsService* item: data) {
         if (item->type() == m_type &&

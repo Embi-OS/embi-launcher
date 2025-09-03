@@ -50,6 +50,30 @@ public Q_SLOTS: // METHODS
     }
 };
 
+class OrgFreedesktopTimesync1Interface : public QDBusAbstractInterface
+{
+    Q_OBJECT
+    Q_PROPERTY(QString ServerName READ serverName CONSTANT FINAL)
+    Q_PROPERTY(QString ServerAddress READ serverAddress CONSTANT FINAL)
+    Q_PROPERTY(int PollIntervalMinUSec READ pollIntervalMinUSec CONSTANT FINAL)
+    Q_PROPERTY(int PollIntervalMaxUSec READ pollIntervalMaxUSec CONSTANT FINAL)
+    Q_PROPERTY(int Frequency READ frequency CONSTANT FINAL)
+
+public:
+    static inline const char *staticInterfaceName()
+    { return "org.freedesktop.timesync1.Manager"; }
+
+    OrgFreedesktopTimesync1Interface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr):
+        QDBusAbstractInterface(service, path, staticInterfaceName(), connection, parent)
+    {}
+
+    inline QString serverName() const { return qvariant_cast<QString>(property("ServerName")); }
+    inline QString serverAddress() const { return qvariant_cast<QString>(property("ServerAddress")); }
+    inline qlonglong pollIntervalMinUSec() const { return qvariant_cast<qlonglong>(property("PollIntervalMinUSec")); }
+    inline qlonglong pollIntervalMaxUSec() const { return qvariant_cast<qlonglong>(property("PollIntervalMaxUSec")); }
+    inline quint32 frequency() const { return qvariant_cast<quint32>(property("Frequency")); }
+};
+
 namespace org {
     namespace freedesktop {
         typedef ::OrgFreedesktopTimedate1Interface timedate1;
@@ -70,10 +94,20 @@ public:
     bool getNtp() const override;
     bool setNtp(bool aNtp) override;
 
+    QString getTimeservers() const override;
+    bool setTimeservers(const QString& timeservers) override;
+
     bool setSystemTime(const QDateTime& aTime) override;
 
+    QString serverName() const override;
+    QString serverAddress() const override;
+    int pollIntervalMinUSec() const override;
+    int pollIntervalMaxUSec() const override;
+    int frequency() const override;
+
 private:
-    OrgFreedesktopTimedate1Interface *m_interface;
+    OrgFreedesktopTimedate1Interface *m_timedateInterface;
+    OrgFreedesktopTimesync1Interface *m_timesyncInterface;
 };
 
 #endif // TIMEDATECOMPONENTDBUS_H

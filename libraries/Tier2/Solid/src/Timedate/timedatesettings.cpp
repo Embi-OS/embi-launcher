@@ -58,6 +58,13 @@ bool TimedateSettings::canSetNtp()
     return getComponent()->canSetNtp();
 }
 
+bool TimedateSettings::canSetTimeservers()
+{
+    if(!getComponent())
+        return false;
+    return getComponent()->canSetTimeservers();
+}
+
 bool TimedateSettings::canSetSystemDateTime()
 {
     if(!getComponent())
@@ -114,6 +121,31 @@ void TimedateSettings::setNtp(const bool ntp)
         emit this->ntpChanged();
 }
 
+QString TimedateSettings::getTimeservers() const
+{
+    if(!canSetTimeservers())
+    {
+        SOLIDLOG_DEBUG()<<"Cannot get timeservers, fallback to default";
+        return QString();
+    }
+
+    return getComponent()->getTimeservers();
+}
+
+void TimedateSettings::setTimeservers(const QString& timeservers)
+{
+    if(!canSetTimeservers())
+    {
+        SOLIDLOG_WARNING()<<"Cannot set timeservers";
+        return;
+    }
+
+    if(getComponent()->setTimeservers(timeservers))
+        emit this->timeserversChanged();
+
+    syncNtp();
+}
+
 QDateTime TimedateSettings::getSystemDateTime() const
 {
     return QDateTime::currentDateTime();
@@ -127,6 +159,37 @@ QDate TimedateSettings::getSystemDate() const
 QTime TimedateSettings::getSystemTime() const
 {
     return getSystemDateTime().time();
+}
+
+QString TimedateSettings::serverName() const
+{
+    if(!getComponent())
+        return QString();
+    return getComponent()->serverName();
+}
+QString TimedateSettings::serverAddress() const
+{
+    if(!getComponent())
+        return QString();
+    return getComponent()->serverAddress();
+}
+int TimedateSettings::pollIntervalMinUSec() const
+{
+    if(!getComponent())
+        return -1;
+    return getComponent()->pollIntervalMinUSec();
+}
+int TimedateSettings::pollIntervalMaxUSec() const
+{
+    if(!getComponent())
+        return -1;
+    return getComponent()->pollIntervalMaxUSec();
+}
+int TimedateSettings::frequency() const
+{
+    if(!getComponent())
+        return -1;
+    return getComponent()->frequency();
 }
 
 void TimedateSettings::setSystemDateTime(const QDateTime& systemDateTime)
@@ -189,6 +252,33 @@ QString TimedateSettings::timedateCtl()
         ret.append(output.trimmed());
 
     return ret.join("\n");
+}
+
+bool TimedateSettings::syncNtp()
+{
+    QString program="systemctl";
+    QStringList arguments = QStringList()<<"restart"<<"systemd-timesyncd";
+
+    QProcess process;
+    process.setProgram(program);
+    process.setArguments(arguments);
+    process.start();
+
+    bool result = process.waitForFinished(1000);
+
+    QString processOutput = process.readAllStandardOutput();
+    QString processError = process.readAllStandardError();
+
+    if(!processOutput.isEmpty()) {
+        SOLIDLOG_TRACE().noquote()<<QString("processOutput:\n%1").arg(processOutput);
+    }
+    if(!processError.isEmpty()) {
+        SOLIDLOG_CRITICAL().noquote()<<QString("processError:\n%1").arg(processError);
+    }
+
+    emit this->timesyncChanged();
+
+    return result;
 }
 
 bool TimedateSettings::syncRtc()

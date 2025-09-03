@@ -535,3 +535,17 @@ void NetworkSettingsWireless::setOutOfRange(const bool aOutOfRange) {
 bool NetworkSettingsWireless::outOfRange() const {
     return m_isOutOfRange;
 }
+
+/*!
+    \class NetworkSettingsEthernet
+    \inmodule QtNetworkSettings
+    \brief The NetworkSettingsEthernet class encapsulates the configuration
+    for a Ethernet network service.
+*/
+
+/*!
+    Creates a new Wifi network configuration with the parent \a parent.
+*/
+NetworkSettingsEthernet::NetworkSettingsEthernet(QObject* parent)
+    : QObject(parent) {
+}

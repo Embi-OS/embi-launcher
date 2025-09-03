@@ -20,9 +20,11 @@ class NetworkSettingsService : public QObject
     Q_PROPERTY(NetworkSettingsIPv4* ipv4 READ ipv4 NOTIFY ipv4Changed FINAL)
     Q_PROPERTY(NetworkSettingsIPv6* ipv6 READ ipv6 NOTIFY ipv6Changed FINAL)
     Q_PROPERTY(NetworkSettingsProxy* proxy READ proxy  NOTIFY proxyChanged FINAL)
+    Q_PROPERTY(NetworkSettingsEthernet* ethernetConfig READ ethernetConfig NOTIFY ethernetChanged FINAL)
     Q_PROPERTY(NetworkSettingsWireless* wirelessConfig READ wirelessConfig NOTIFY wirelessChanged FINAL)
     Q_PROPERTY(QAbstractItemModel* domains READ domains NOTIFY domainsChanged FINAL)
     Q_PROPERTY(QAbstractItemModel* nameservers READ nameservers NOTIFY nameserversChanged FINAL)
+    Q_PROPERTY(QAbstractItemModel* timeservers READ timeservers NOTIFY timeserversChanged FINAL)
     Q_PROPERTY(bool autoConnect READ autoConnect WRITE setAutoConnect NOTIFY autoConnectChanged FINAL)
 public:
     explicit NetworkSettingsService(const QString& aServiceId, QObject* parent = nullptr);
@@ -37,6 +39,8 @@ public:
     NetworkSettingsProxy* proxy();
     QAbstractItemModel* domains();
     QAbstractItemModel* nameservers();
+    QAbstractItemModel* timeservers();
+    NetworkSettingsEthernet* ethernetConfig();
     NetworkSettingsWireless* wirelessConfig();
     void setPlaceholderState(bool placeholderState);
     bool placeholderState() const;
@@ -45,6 +49,7 @@ public:
     Q_INVOKABLE bool autoConnect() const;
     Q_INVOKABLE void setupIpv4Config();
     Q_INVOKABLE void setupIpv6Config();
+    Q_INVOKABLE void setupTimeserversConfig();
     Q_INVOKABLE void setupNameserversConfig();
     Q_INVOKABLE void setupDomainsConfig();
     Q_INVOKABLE void setupNetworkSettingsProxy();
@@ -63,6 +68,8 @@ Q_SIGNALS:
     void ipv6Changed();
     void domainsChanged();
     void nameserversChanged();
+    void timeserversChanged();
+    void ethernetChanged();
     void wirelessChanged();
     void connectionStateCleared();
     void serviceConnected(NetworkSettingsService* service);

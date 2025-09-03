@@ -37,7 +37,8 @@ public:
         SignalStrength,
         Connected,
         Interface,
-        Address
+        Address,
+        MAC
     };
 
 

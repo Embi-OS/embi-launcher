@@ -27,7 +27,8 @@ public:
         Connected,
         Up,
         Running,
-        Address
+        Address,
+        MAC
     };
 
     enum InterfaceType {

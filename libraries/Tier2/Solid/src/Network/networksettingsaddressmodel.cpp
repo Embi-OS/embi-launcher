@@ -91,3 +91,34 @@ void NetworkSettingsAddressModel::resetChanges()
 {
     QStringListModel::setStringList(m_addresses);
 }
+
+/*!
+    Clear all the addresses in the address model.
+*/
+void NetworkSettingsAddressModel::clear()
+{
+    QStringListModel::setStringList(QStringList());
+    emit countChanged();
+}
+
+/*!
+    Set the addresses to \a addresses in the address model.
+*/
+void NetworkSettingsAddressModel::changeStringList(const QStringList &addresses)
+{
+    QStringListModel::setStringList(addresses);
+    emit countChanged();
+}
+
+
+bool NetworkSettingsAddressModel::automatic() const
+{
+    return m_automatic;
+}
+void NetworkSettingsAddressModel::setAutomatic(bool automatic)
+{
+    if(m_automatic==automatic)
+        return;
+    m_automatic = automatic;
+    emit automaticChanged();
+}

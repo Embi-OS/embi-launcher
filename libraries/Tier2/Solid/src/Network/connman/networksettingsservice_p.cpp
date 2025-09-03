@@ -7,6 +7,8 @@ const QString PropertyIPv4(QStringLiteral("IPv4"));
 const QString PropertyQNetworkSettingsIPv4(QStringLiteral("IPv4.Configuration"));
 const QString PropertyIPv6(QStringLiteral("IPv6"));
 const QString PropertyQNetworkSettingsIPv6(QStringLiteral("IPv6.Configuration"));
+const QString PropertyTimeservers(QStringLiteral("Timeservers"));
+const QString PropertyTimeserversConfig(QStringLiteral("Timeservers.Configuration"));
 const QString PropertyNameservers(QStringLiteral("Nameservers"));
 const QString PropertyNameserversConfig(QStringLiteral("Nameservers.Configuration"));
 const QString PropertyDomains(QStringLiteral("Domains"));
@@ -24,6 +26,8 @@ const QString PropertyServers(QStringLiteral("Servers"));
 const QString PropertyExcludes(QStringLiteral("Excludes"));
 const QString PropertyStrength(QStringLiteral("Strength"));
 const QString PropertySecurity(QStringLiteral("Security"));
+const QString PropertyEthernet(QStringLiteral("Ethernet"));
+const QString PropertyInterface(QStringLiteral("Interface"));
 
 const QString AttributeAuto(QStringLiteral("auto"));
 const QString AttributeDhcp(QStringLiteral("dhcp"));
@@ -209,6 +213,28 @@ const QVariantMap &operator<<(QVariantMap &argument, const NetworkSettingsProxy 
     return argument;
 }
 
+const QVariantMap &operator>>(const QVariantMap &argument, NetworkSettingsEthernet &obj)
+{
+    obj.setAddress(argument[PropertyAddress].toString());
+    obj.setInterface(argument[PropertyInterface].toString());
+
+    QString method = argument[PropertyMethod].toString();
+
+    if (method == AttributeAuto) {
+        obj.setMethod(NetworkSettingsEthernet::Auto);
+    }
+    else if (method == AttributeManual) {
+        obj.setMethod(NetworkSettingsEthernet::Manual);
+    }
+    else if (method == AttributeOff) {
+        obj.setMethod(NetworkSettingsEthernet::Off);
+    }
+    else {
+        obj.setMethod(NetworkSettingsEthernet::Off);
+    }
+    return argument;
+}
+
 NetworkSettingsServicePrivate::NetworkSettingsServicePrivate(const QString& id, NetworkSettingsService *parent) :
     QObject(parent)
     ,q_ptr(parent)
@@ -249,6 +275,13 @@ void NetworkSettingsServicePrivate::setupIpv6Config()
     param<<m_ipv6config;
     if (m_service)
         m_service->SetProperty(PropertyQNetworkSettingsIPv6, QDBusVariant(QVariant(param)));
+}
+
+void NetworkSettingsServicePrivate::setupTimeserversConfig()
+{
+    QVariant param = QVariant::fromValue(m_timeserverConfig.stringList());
+    if (m_service)
+        m_service->SetProperty(PropertyTimeserversConfig, QDBusVariant(QVariant(param)));
 }
 
 void NetworkSettingsServicePrivate::setupNameserversConfig()
@@ -364,14 +397,34 @@ void NetworkSettingsServicePrivate::updateProperty(const QString& key, const QVa
         value >> m_ipv6config;
         emit q->ipv6Changed();
     }
+    else if (key == PropertyTimeservers) {
+        QStringList value = qdbus_cast<QStringList>(val);
+        m_timeserverConfig.setStringList(value);
+        emit q->timeserversChanged();
+    }
+    else if (key == PropertyTimeserversConfig) {
+        QStringList value = qdbus_cast<QStringList>(val);
+        m_timeserverConfig.setAutomatic(value.isEmpty());
+        emit q->timeserversChanged();
+    }
     else if (key == PropertyNameservers) {
         QStringList value = qdbus_cast<QStringList>(val);
         m_nameserverConfig.setStringList(value);
         emit q->nameserversChanged();
     }
+    else if (key == PropertyNameserversConfig) {
+        QStringList value = qdbus_cast<QStringList>(val);
+        m_nameserverConfig.setAutomatic(value.isEmpty());
+        emit q->nameserversChanged();
+    }
     else if (key == PropertyDomains) {
         QStringList value = qdbus_cast<QStringList>(val);
         m_domainsConfig.setStringList(value);
+        emit q->domainsChanged();
+    }
+    else if (key == PropertyDomainsConfig) {
+        QStringList value = qdbus_cast<QStringList>(val);
+        m_domainsConfig.setAutomatic(value.isEmpty());
         emit q->domainsChanged();
     }
     else if (key == PropertyProxy) {
@@ -402,6 +455,11 @@ void NetworkSettingsServicePrivate::updateProperty(const QString& key, const QVa
             emit q->serviceConnected(q);
         if (m_state.state() == NetworkSettingsState::Disconnect)
             emit q->serviceDisconnected(q);
+    }
+    else if (key == PropertyEthernet) {
+        QVariantMap value = qdbus_cast<QVariantMap>(val);
+        value >> m_ethernetConfig;
+        emit q->ethernetChanged();
     }
     else if (key == PropertyStrength) {
         m_wifiConfig.setSignalStrength(val.toInt());

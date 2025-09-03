@@ -18,6 +18,7 @@ NetworkInterfaceModel::NetworkInterfaceModel(QObject *parent) :
     m_roleNames.insert(Up, "up");
     m_roleNames.insert(Running, "running");
     m_roleNames.insert(Address, "address");
+    m_roleNames.insert(MAC, "mac");
 
     QTimer* timer = new QTimer(this);
     timer->setSingleShot(false);
@@ -64,6 +65,8 @@ QVariant NetworkInterfaceModel::data(const QModelIndex &index, int role) const
         }
         return "N/A";
     }
+    case MAC:
+        return interface.hardwareAddress();
     }
 
     return QVariant();

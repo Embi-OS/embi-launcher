@@ -82,5 +82,15 @@ PaneTreeView {
             text: qsTr("Heure")
             info: DateTimeUtils.formatTime(DateTimeUtils.systemDateTime)
         }
+        SeparatorTreeDelegate {}
+        InfoTreeDelegate {
+            text: qsTr("Serveur NTP")
+            info: TimedateSettings.serverName
+        }
+        FormButtonDelegate {
+            label: "Sync NTP"
+            icon: MaterialIcons.clockStarFourPoints
+            onClicked: TimedateSettings.syncNtp()
+        }
     }
 }

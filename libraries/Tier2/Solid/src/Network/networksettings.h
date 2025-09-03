@@ -208,4 +208,26 @@ private:
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(NetworkSettingsWireless::Securities)
 
+
+class NetworkSettingsEthernet : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_UNCREATABLE("")
+
+public:
+    explicit NetworkSettingsEthernet(QObject* parent = nullptr);
+
+    enum Method {
+        Auto = 0,
+        Manual,
+        Off
+    };
+    Q_ENUM(Method)
+
+    Q_READONLY_VAR_PROPERTY(NetworkSettingsEthernet::Method, method, Method, Auto)
+    Q_READONLY_REF_PROPERTY(QString, address, Address, "")
+    Q_READONLY_REF_PROPERTY(QString, interface, Interface, "")
+};
+
 #endif //NETWORKSETTINGS_H

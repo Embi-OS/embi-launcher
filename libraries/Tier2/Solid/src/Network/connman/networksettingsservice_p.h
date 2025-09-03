@@ -30,6 +30,7 @@ protected:
     bool autoConnect() const;
     void setupIpv4Config();
     void setupIpv6Config();
+    void setupTimeserversConfig();
     void setupNameserversConfig();
     void setupDomainsConfig();
     void setupQNetworkSettingsProxy();
@@ -46,8 +47,10 @@ protected:
     NetworkSettingsIPv6 m_ipv6config;
     NetworkSettingsAddressModel m_domainsConfig;
     NetworkSettingsAddressModel m_nameserverConfig;
+    NetworkSettingsAddressModel m_timeserverConfig;
     NetworkSettingsProxy m_proxyConfig;
     NetworkSettingsWireless m_wifiConfig;
+    NetworkSettingsEthernet m_ethernetConfig;
     NetworkSettingsType m_type;
     NetConnmanServiceInterface *m_service;
     bool m_placeholderState = false;
