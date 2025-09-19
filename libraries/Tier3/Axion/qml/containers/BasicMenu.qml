@@ -51,6 +51,8 @@ T.Menu {
     property alias headerItem: listView.headerItem
     property alias headerPositioning: listView.headerPositioning
 
+    property alias section: listView.section
+
     contentItem: ListView {
         id: listView
         implicitHeight: contentHeight

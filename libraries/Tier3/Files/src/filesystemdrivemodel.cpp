@@ -27,11 +27,24 @@ FilesystemDrive::FilesystemDrive(const QStorageInfo& storage, const QFileInfo& i
     m_driveIsReady = storage.isReady();
     m_driveIsRoot = storage.isRoot();
     m_driveIsBoot = storage.rootPath().startsWith("/boot") || storage.name().toLower().contains("boot");
+    m_driveIsConfig = storage.rootPath().startsWith("/config") || storage.name().toLower().contains("config");
+    m_driveIsOverlay = storage.fileSystemType().contains("overlay");
+    m_driveIsNetwork = storage.fileSystemType().contains("nfs") || storage.fileSystemType().contains("smb") || storage.fileSystemType().contains("cifs");
+    m_driveIsUsb = storage.fileSystemType().contains("exfat") || storage.fileSystemType().contains("vfat") || storage.fileSystemType().contains("ntfs");
     m_driveIsValid = storage.isValid();
     m_driveIsMounted = storage.isValid() && storage.isReady() && storage.rootPath()==info.absoluteFilePath();
     m_driveName = storage.name();
     m_driveRootPath = storage.rootPath();
     m_driveSubVolume = storage.subvolume();
+
+    if(m_driveIsRoot || m_driveIsRoot || m_driveIsConfig || m_driveIsOverlay)
+        m_driveDisplayType = tr("Système");
+    else if(m_driveIsNetwork)
+        m_driveDisplayType = tr("Réseau");
+    else if(m_driveIsUsb)
+        m_driveDisplayType = tr("USB");
+    else
+        m_driveDisplayType = tr("Standard");
 
     m_fileInfo = info;
     m_fileUrl = QUrl::fromLocalFile(info.absoluteFilePath()).toString();
@@ -91,8 +104,22 @@ FilesystemDriveModel::FilesystemDriveModel(QObject* parent) :
     connect(this, &FilesystemDriveModel::showUnmountedAutofsDrivesChanged, this, &FilesystemDriveModel::markDirty);
     connect(this, &FilesystemDriveModel::showTmpfsDrivesChanged, this, &FilesystemDriveModel::markDirty);
     connect(this, &FilesystemDriveModel::showBootDrivesChanged, this, &FilesystemDriveModel::markDirty);
+    connect(this, &FilesystemDriveModel::showConfigDrivesChanged, this, &FilesystemDriveModel::markDirty);
     connect(this, &FilesystemDriveModel::showReadOnlyDrivesChanged, this, &FilesystemDriveModel::markDirty);
     connect(this, &FilesystemDriveModel::showFsTabDrivesChanged, this, &FilesystemDriveModel::markDirty);
+}
+
+QList<QStorageInfo> FilesystemDriveModel::mountedVolumes(bool mount)
+{
+#if QT_CONFIG(process)
+    if(mount)
+    {
+        QProcess process;
+        process.start("mount", {"-a"});
+        process.waitForFinished();
+    }
+#endif
+    return QStorageInfo::mountedVolumes();
 }
 
 void FilesystemDriveModel::refresh()
@@ -103,14 +130,14 @@ void FilesystemDriveModel::refresh()
 
 #ifdef QT_CONCURRENT_LIB
     auto future = QtConcurrent::run([]() {
-        return QStorageInfo::mountedVolumes();
+        return FilesystemDriveModel::mountedVolumes(true);
     });
     future.then(this, [this](const QList<QStorageInfo>& storageList) {
         setStorageList(storageList);
         m_isRefreshing = false;
     });
 #else
-    const QList<QStorageInfo> storageList = QStorageInfo::mountedVolumes();
+    const QList<QStorageInfo> storageList = FilesystemDriveModel::mountedVolumes(true);
     setStorageList(storageList);
     m_isRefreshing = false;
 #endif
@@ -219,12 +246,22 @@ bool FilesystemDriveModel::isStorageInfoValid(const QStorageInfo& storage)
 
     // isTmpfs
     if((storage.fileSystemType().toLower()==("tmpfs"))
-            && !getShowTmpfsDrives())
+        && !getShowTmpfsDrives())
+        return false;
+
+    // isOverlay
+    if((storage.fileSystemType().toLower()==("overlay"))
+        && !getShowOverlayDrives())
+        return false;
+
+    // isConfig
+    if((storage.rootPath().startsWith("/config") || storage.name().toLower().contains("config"))
+        && !getShowConfigDrives())
         return false;
 
     // isBoot
     if((storage.rootPath().startsWith("/boot") || storage.name().toLower().contains("boot"))
-            && !getShowBootDrives())
+        && !getShowBootDrives())
         return false;
 
     // isRoot

@@ -25,6 +25,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
+        anchors.bottom: parent.bottom
         anchors.margins: 40
         spacing: 40
 
@@ -50,6 +51,12 @@ Item {
             Layout.maximumWidth: buttons.width
             Layout.fillHeight: true
             text: Version.aboutQt()
+            wrapMode: Text.Wrap
+        }
+
+        BasicLabel {
+            font: Style.textTheme.caption1
+            text: DeviceInfo.about()
             wrapMode: Text.Wrap
         }
     }

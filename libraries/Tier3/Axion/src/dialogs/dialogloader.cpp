@@ -57,6 +57,7 @@ void DialogLoader::onActiveChanged(bool active)
         connect(this, &DialogLoader::buttonAcceptChanged, dialog, &DialogObject::setButtonAccept);
         connect(this, &DialogLoader::buttonRejectChanged, dialog, &DialogObject::setButtonReject);
         connect(this, &DialogLoader::buttonHelpChanged, dialog, &DialogObject::setButtonHelp);
+        connect(this, &DialogLoader::diagnoseChanged, dialog, &DialogObject::setDiagnose);
 
         connect(dialog, &DialogObject::aboutToHide, this, &DialogLoader::aboutToHide);
         connect(dialog, &DialogObject::aboutToShow, this, &DialogLoader::aboutToShow);

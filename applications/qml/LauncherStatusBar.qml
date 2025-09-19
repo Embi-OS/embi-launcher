@@ -44,18 +44,34 @@ LauncherInfosBar {
             title: qsTr("Disques / USB")
             onOpened: Filesystem.drives.markDirty()
 
+            section.property: "driveDisplayType"
+            section.delegate: BasicLabel {
+                width: (ListView.view as ListView).width
+                topInset: Style.menuItemTopInset
+                bottomInset: Style.menuItemBottomInset
+                leftInset: Style.menuItemLeftInset
+                rightInset: Style.menuItemRightInset
+                required property string section
+                text: qsTr("Disque(s): %1").arg(section)
+                font: Style.textTheme.headline7
+            }
+
             Repeater {
                 model: ProxyModel {
                     delayed: true
                     enabled: diskMenu.opened
                     sourceModel: Filesystem.drives
+                    sortRoleName: "driveDisplayType"
                 }
                 delegate: BasicMenuItem {
                     required property FilesystemDrive qtObject
                     required property string name
                     required property string driveDevice
                     required property string fileUrl
-                    hint: qsTr("Ejecter")
+                    required property string driveDisplayType
+                    required property bool driveIsNetwork
+                    enabled: !driveIsNetwork
+                    hint: enabled ? qsTr("Ejecter") : ""
                     text: ("%1 (%2)").arg(name).arg(driveDevice)
                     icon.source: MimeIconHelper.getSvgIconPathForUrl(fileUrl)
                     onTriggered: Filesystem.drives.eject(qtObject)

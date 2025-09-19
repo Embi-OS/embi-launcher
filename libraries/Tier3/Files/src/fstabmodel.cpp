@@ -110,12 +110,14 @@ bool FstabModel::addSmbShare(const QVariantMap& mountParams)
     if(!data.isValid())
     {
         FILESLOG_CRITICAL()<<"Invalid FsTabEntry:"<<data;
+        emit this->error("Invalid FsTabEntry");
         return false;
     }
 
     if(QModelHelper::contains(this, "mountPoint", data.mountPoint()))
     {
         FILESLOG_WARNING()<<data<<"already exists";
+        emit this->error(QString("%1 already exists").arg(data.mountPoint()));
         return true;
     }
 
@@ -124,12 +126,14 @@ bool FstabModel::addSmbShare(const QVariantMap& mountParams)
         if(!QDir().mkpath(data.mountPoint()))
         {
             FILESLOG_WARNING()<<"Failed to mkdir"<<data.mountPoint();
+            emit this->error(QString("Failed to mkdir %1").arg(data.mountPoint()));
             return false;
         }
     }
     else if(!QDir(data.mountPoint()).isEmpty())
     {
         FILESLOG_WARNING()<<data.mountPoint()<<"is not empty";
+        emit this->error(QString("%1 is not empty").arg(data.mountPoint()));
         return false;
     }
 
@@ -151,12 +155,14 @@ bool FstabModel::updateSmbShare(const QString& mountPoint, const QVariantMap& mo
     if(!data.isValid())
     {
         FILESLOG_CRITICAL()<<"Invalid FsTabEntry:"<<data;
+        emit this->error("Invalid FsTabEntry");
         return false;
     }
 
     if(!QModelHelper::contains(this, "mountPoint", mountPoint))
     {
         FILESLOG_WARNING()<<mountPoint<<"does not exists";
+        emit this->error(QString("%1 does not exists").arg(mountPoint));
         return true;
     }
 

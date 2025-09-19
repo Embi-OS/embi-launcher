@@ -18,7 +18,9 @@ class SnackbarObject : public QObject
     Q_OBJECT
     QML_ELEMENT
     QML_UNCREATABLE("Uncreatable")
+
     Q_WRITABLE_VAR_PROPERTY(SnackbarSeverities::Enum, severity, Severity, SnackbarSeverities::None)
+    Q_WRITABLE_REF_PROPERTY(QVariant, settings, Settings, {})
     Q_WRITABLE_REF_PROPERTY(QString, title, Title, {})
     Q_WRITABLE_REF_PROPERTY(QString, caption, Caption, {})
     Q_WRITABLE_REF_PROPERTY(QString, details, Details, {})
@@ -26,8 +28,6 @@ class SnackbarObject : public QObject
     Q_WRITABLE_VAR_PROPERTY(bool, closable, Closable, false)
     Q_WRITABLE_VAR_PROPERTY(int, timeout, Timeout, 5000)
     Q_CALLABLE_VAR_PROPERTY(int, progress, Progress, 0)
-
-    Q_WRITABLE_REF_PROPERTY(QVariant, settings, Settings, {})
 
     Q_WRITABLE_VAR_PROPERTY(bool, visible, Visible, false)
 

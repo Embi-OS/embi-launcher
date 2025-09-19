@@ -6442,6 +6442,7 @@ public:
     Q_CONSTANT_REF_PROPERTY(QString, switch_, Switch, "qrc:/images/material/switch.svg")
     Q_CONSTANT_REF_PROPERTY(QString, swordCross, SwordCross, "qrc:/images/material/sword-cross.svg")
     Q_CONSTANT_REF_PROPERTY(QString, sword, Sword, "qrc:/images/material/sword.svg")
+    Q_CONSTANT_REF_PROPERTY(QString, swupdate, Swupdate, "qrc:/images/material/swupdate.svg")
     Q_CONSTANT_REF_PROPERTY(QString, syllabaryHangul, SyllabaryHangul, "qrc:/images/material/syllabary-hangul.svg")
     Q_CONSTANT_REF_PROPERTY(QString, syllabaryHiragana, SyllabaryHiragana, "qrc:/images/material/syllabary-hiragana.svg")
     Q_CONSTANT_REF_PROPERTY(QString, syllabaryKatakanaHalfwidth, SyllabaryKatakanaHalfwidth, "qrc:/images/material/syllabary-katakana-halfwidth.svg")

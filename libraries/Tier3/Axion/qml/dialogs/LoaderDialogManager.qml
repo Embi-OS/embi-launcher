@@ -17,7 +17,7 @@ Item {
 
             dialogObject: qtObject
             required isVisible
-            required fullScreen
+            required fullscreen
             required settings
             required type
             required severity

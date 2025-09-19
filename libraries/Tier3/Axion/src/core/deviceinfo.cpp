@@ -24,6 +24,17 @@ void DeviceInfo::dumpInfos()
     AXIONLOG_INFO().noquote()<<debugStr;
 }
 
+QString DeviceInfo::about()
+{
+    QString about;
+    about += QString("Running on: %1 [%2] arch %3\n").arg(platformName(),platformKernelVersion(), platformCpuArchitecture());
+    about += QString("Qt Version: %1 [%2]\n").arg(qtVersion(), buildAbi());
+    about += QString("Qt Version build: %1\n").arg(qtVersionBuild());
+    about += QString("Version: %1\n").arg(QVersionNumber(PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH).toString());
+    about += QString("Build date: %1 at %2\n").arg(buildDate(), buildTime());
+    return about;
+}
+
 bool DeviceInfo::isMobile()
 {
     return isTouchDevice() && !isTablet();

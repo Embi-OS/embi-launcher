@@ -25,6 +25,7 @@ public:
     Q_CONSTANT_REF_PROPERTY(QString, driveQrc, DriveQrc, "qrc:/images/filetypes/drive-qrc.svg")
     Q_CONSTANT_REF_PROPERTY(QString, driveRoot, DriveRoot, "qrc:/images/filetypes/drive-root.svg")
     Q_CONSTANT_REF_PROPERTY(QString, driveUsb, DriveUsb, "qrc:/images/filetypes/drive-usb.svg")
+    Q_CONSTANT_REF_PROPERTY(QString, driveVirtual, DriveVirtual, "qrc:/images/filetypes/drive-virtual.svg")
     Q_CONSTANT_REF_PROPERTY(QString, drive, Drive, "qrc:/images/filetypes/drive.svg")
     Q_CONSTANT_REF_PROPERTY(QString, fileBinary, FileBinary, "qrc:/images/filetypes/file-binary.svg")
     Q_CONSTANT_REF_PROPERTY(QString, fileCode, FileCode, "qrc:/images/filetypes/file-code.svg")

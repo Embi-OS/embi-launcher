@@ -21,11 +21,16 @@ class FilesystemDrive : public QObject
     Q_CONSTANT_VAR_PROPERTY(qint64, driveBytesTotal, DriveBytesTotal, 0)
     Q_CONSTANT_REF_PROPERTY(QByteArray, driveDevice, DriveDevice, "")
     Q_CONSTANT_REF_PROPERTY(QString, driveDisplayName, DriveDisplayName, "")
+    Q_CONSTANT_REF_PROPERTY(QString, driveDisplayType, DriveDisplayType, "")
     Q_CONSTANT_REF_PROPERTY(QByteArray, driveFileSystemType, DriveFileSystemType, "")
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsReadOnly, DriveIsReadOnly, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsReady, DriveIsReady, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsRoot, DriveIsRoot, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsBoot, DriveIsBoot, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsConfig, DriveIsConfig, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsOverlay, DriveIsOverlay, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsNetwork, DriveIsNetwork, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsUsb, DriveIsUsb, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsValid, DriveIsValid, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsMounted, DriveIsMounted, false)
     Q_CONSTANT_REF_PROPERTY(QString, driveName, DriveName, "")
@@ -67,12 +72,16 @@ class FilesystemDriveModel : public QObjectListModel
     Q_WRITABLE_VAR_PROPERTY(bool, showSnapPackageDrives, ShowSnapPackageDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showUnmountedAutofsDrives, ShowUnmountedAutofsDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showTmpfsDrives, ShowTmpfsDrives, false)
+    Q_WRITABLE_VAR_PROPERTY(bool, showOverlayDrives, ShowOverlayDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showBootDrives, ShowBootDrives, false)
+    Q_WRITABLE_VAR_PROPERTY(bool, showConfigDrives, ShowConfigDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showReadOnlyDrives, ShowReadOnlyDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showFsTabDrives, ShowFsTabDrives, false)
 
 public:
     explicit FilesystemDriveModel(QObject* parent = nullptr);
+
+    static QList<QStorageInfo> mountedVolumes(bool mount=false);
 
 public slots:
     void refresh();

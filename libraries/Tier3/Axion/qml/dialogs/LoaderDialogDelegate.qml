@@ -9,7 +9,7 @@ Item {
 
     required property DialogObject dialogObject
     property bool isVisible: false
-    property bool fullScreen: false
+    property bool fullscreen: false
     property var settings: null
     property int type: DialogTypes.None
     property int severity: DialogSeverities.None
@@ -119,7 +119,7 @@ Item {
     Component {
         id: dialogAction
         DialogAction {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title
@@ -148,7 +148,7 @@ Item {
     Component {
         id: dialogText
         DialogText {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title
@@ -176,7 +176,7 @@ Item {
     Component {
         id: dialogTree
         DialogTreeView {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title
@@ -204,7 +204,7 @@ Item {
     Component {
         id: dialogBusy
         DialogBusy {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title
@@ -235,7 +235,7 @@ Item {
     Component {
         id: dialogDate
         DialogDatePicker {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             buttonReject: root.buttonReject
@@ -269,7 +269,7 @@ Item {
     Component {
         id: dialogTime
         DialogTimePicker {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             buttonReject: root.buttonReject
@@ -302,7 +302,7 @@ Item {
     Component {
         id: dialogFileTree
         DialogFileTree {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title
@@ -318,7 +318,9 @@ Item {
             folderTreeModel.showSnapPackageDrives: root.settings?.showSnapPackageDrives ?? false
             folderTreeModel.showUnmountedAutofsDrives: root.settings?.showUnmountedAutofsDrives ?? false
             folderTreeModel.showTmpfsDrives: root.settings?.showTmpfsDrives ?? false
+            folderTreeModel.showOverlayDrives: root.settings?.showOverlayDrives ?? false
             folderTreeModel.showBootDrives: root.settings?.showBootDrives ?? false
+            folderTreeModel.showConfigDrives: root.settings?.showConfigDrives ?? false
             folderTreeModel.showReadOnlyDrives: root.settings?.showReadOnlyDrives ?? false
             folderTreeModel.showQrcDrives: root.settings?.showQrcDrives ?? false
             folderTreeModel.showStandardPaths: root.settings?.showStandardPaths ?? true
@@ -363,7 +365,7 @@ Item {
     Component {
         id: dialogInput
         DialogInput {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title
@@ -411,7 +413,7 @@ Item {
     Component {
         id: dialogForm
         DialogForm {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title
@@ -451,7 +453,7 @@ Item {
     Component {
         id: dialogAlarm
         DialogAlarm {
-            fullScreen: root.fullScreen
+            fullscreen: root.fullscreen
             animation: root.animation
 
             title: root.title

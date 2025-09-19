@@ -32,7 +32,7 @@ class DialogObject : public QObject
     QML_UNCREATABLE("Uncreatable")
 
     Q_READONLY_VAR_PROPERTY(bool, isVisible, IsVisible, false)
-    Q_READONLY_VAR_PROPERTY(bool, fullScreen, FullScreen, false)
+    Q_READONLY_VAR_PROPERTY(bool, fullscreen, Fullscreen, false)
 
     Q_READONLY_VAR_PROPERTY(DialogTypes::Enum, type, Type, DialogTypes::None)
     Q_WRITABLE_VAR_PROPERTY(DialogSeverities::Enum, severity, Severity, DialogSeverities::None)

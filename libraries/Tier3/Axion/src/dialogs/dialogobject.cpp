@@ -20,8 +20,8 @@ void DialogObject::onSettingsChanged(const QVariant& settings)
     else
     {
         const QVariantMap map = settings.toMap();
-        if(map.contains("fullScreen"))
-            setFullScreen(map.value("fullScreen").toBool());
+        if(map.contains("fullscreen"))
+            setFullscreen(map.value("fullscreen").toBool());
         if(map.contains("title"))
             setTitle(map.value("title").toString());
         if(map.contains("message"))

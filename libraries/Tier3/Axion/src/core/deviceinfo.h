@@ -66,6 +66,7 @@ protected:
 
 public:
     Q_INVOKABLE static void dumpInfos();
+    Q_INVOKABLE static QString about();
 
     static bool isMobile();
     static bool isTablet();

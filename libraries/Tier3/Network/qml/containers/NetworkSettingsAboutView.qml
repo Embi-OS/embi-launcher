@@ -35,6 +35,22 @@ PaneTreeView {
         SeparatorTreeDelegate {}
 
         SubtitleTreeDelegate {
+            text: qsTr("Hostname")
+            InfoTreeDelegate {text: "hostname";info: HostnameSettings.hostname}
+            InfoTreeDelegate {text: "staticHostname";info: HostnameSettings.staticHostname}
+            InfoTreeDelegate {text: "prettyHostname";info: HostnameSettings.prettyHostname}
+            InfoTreeDelegate {text: "iconName";info: HostnameSettings.iconName}
+            InfoTreeDelegate {text: "chassis";info: HostnameSettings.chassis}
+            InfoTreeDelegate {text: "kernelName";info: HostnameSettings.kernelName}
+            InfoTreeDelegate {text: "kernelRelease";info: HostnameSettings.kernelRelease}
+            InfoTreeDelegate {text: "kernelVersion";info: HostnameSettings.kernelVersion}
+            InfoTreeDelegate {text: "operatingSystemPrettyName";info: HostnameSettings.operatingSystemPrettyName}
+            InfoTreeDelegate {text: "operatingSystemCPEName";info: HostnameSettings.operatingSystemCPEName}
+            InfoTreeDelegate {text: "hardwareVendor";info: HostnameSettings.hardwareVendor}
+            InfoTreeDelegate {text: "hardwareModel";info: HostnameSettings.hardwareModel}
+        }
+
+        SubtitleTreeDelegate {
             text: qsTr("Informations")
             InfoTreeDelegate {text: "Backend";info: Network.backend}
             InfoTreeDelegate {text: "Reachability";info: Network.reachability}

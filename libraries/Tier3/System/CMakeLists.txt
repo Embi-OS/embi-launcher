@@ -1,6 +1,7 @@
 # CMakeLists.txt for System Library
 
 include(Common)
+include(TryLinkLibrary)
 
 project(System)
 
@@ -32,3 +33,5 @@ embi_add_qml_module(${PROJECT_NAME}
     DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+target_try_link_libraries(${PROJECT_NAME} swupdate SWUPDATE)

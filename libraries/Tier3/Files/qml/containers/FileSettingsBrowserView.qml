@@ -48,7 +48,9 @@ PaneSplitView {
         showSnapPackageDrives: false
         showUnmountedAutofsDrives: false
         showTmpfsDrives: false
+        showOverlayDrives: false
         showBootDrives: false
+        showConfigDrives: false
         showReadOnlyDrives: false
         showQrcDrives: true
         showStandardPaths: true
@@ -169,6 +171,7 @@ PaneSplitView {
             "title": textFile.fileName,
             "message": textFile.error ? textFile.error : textFile.fileUrl,
             "infos": textFile.content,
+            "fullscreen": true,
             "diagnose": false
         }
         DialogManager.showText(settings);

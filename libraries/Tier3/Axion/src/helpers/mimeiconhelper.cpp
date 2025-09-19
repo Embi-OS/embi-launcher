@@ -308,6 +308,7 @@ void MetaDataCache::registerStandardMimetypes()
 
     registerSvgIconForFsType ("root", "drive-root");
     registerSvgIconForFsType ("boot", "drive-boot");
+    registerSvgIconForFsType ("overlay", "drive-virtual");
 
     registerSvgIconForFsType ("ext", "drive");
     registerSvgIconForFsType ("ext2", "drive");

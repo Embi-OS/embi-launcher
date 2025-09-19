@@ -134,4 +134,11 @@ StandardObjectModel {
         icon: MaterialIcons.fileDocumentOutline
         delegate: SettingsLogsView {}
     }
+
+    StandardObject {
+        group: "300_System"
+        text: qsTr("SWUpdate")
+        icon: MaterialIcons.swupdate
+        delegate: SettingsSwupdateView {}
+    }
 }

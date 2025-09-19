@@ -101,6 +101,10 @@ TextTheme::TextTheme(QObject* parent) :
     hint2.setPixelSize(11);
     hint2.setWeight(QFont::Weight::Normal);
 
+    code.setFamily("Monospace");
+    code.setPixelSize(14);
+    code.setWeight(QFont::Weight::Normal);
+
     connect(this, &TextTheme::primaryFontChanged, this, [this](){
         headline1.setFamily(m_primaryFont);
         headline2.setFamily(m_primaryFont);
@@ -264,8 +268,8 @@ void AxionHelper::criticalReboot(const QString& message, const QString& traces)
     settings["infos"] = tr("Le système doit redémarrer pour appliquer tous les changements");
     settings["traces"] = traces;
     settings["buttonAccept"] = tr("Redémarrer");
-    SnackbarObject* snackbar = SnackbarManager::Get()->showWarning(settings);
-    snackbar->onAccepted([](){
+    DialogObject* dialog = DialogManager::Get()->showWarning(settings);
+    dialog->onAccepted([](){
         emit AxionHelper::Get()->rebootAccepted();
     });
 }

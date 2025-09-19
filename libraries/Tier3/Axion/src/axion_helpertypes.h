@@ -34,6 +34,7 @@ class TextTheme : public QObject
     Q_PROPERTY(QFont overline MEMBER overline NOTIFY familyChanged FINAL)
     Q_PROPERTY(QFont hint1 MEMBER hint1 NOTIFY familyChanged FINAL)
     Q_PROPERTY(QFont hint2 MEMBER hint2 NOTIFY familyChanged FINAL)
+    Q_PROPERTY(QFont code MEMBER code CONSTANT FINAL)
 
 public:
     explicit TextTheme(QObject* parent = nullptr);
@@ -59,6 +60,7 @@ public:
     QFont overline;
     QFont hint1;
     QFont hint2;
+    QFont code;
 
 signals:
     void familyChanged();

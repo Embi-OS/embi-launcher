@@ -4,7 +4,7 @@ import Eco.Tier3.Axion
 BasicPane {
     id: root
 
-    font: Style.textTheme.body1
+    font: Style.textTheme.code
     property alias text: textArea.text
     property alias textFormat: textArea.textFormat
     property alias view: view

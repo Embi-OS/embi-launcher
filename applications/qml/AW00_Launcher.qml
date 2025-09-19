@@ -24,7 +24,7 @@ BasicWindow {
     ThemeAttached.sharp: true
     ThemeAttached.dense: false
 
-    ThemeAttached.label: "Embi OS"
+    ThemeAttached.label: "Embi-OS"
     ThemeAttached.icon: "qrc:/images/logo.svg"
     ThemeAttached.logo: "qrc:/images/logo.svg"
     ThemeAttached.splash: "qrc:/images/logo.svg"

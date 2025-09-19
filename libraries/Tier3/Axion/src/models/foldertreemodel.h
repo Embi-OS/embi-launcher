@@ -50,10 +50,16 @@ class FolderTreeObject: public QTreeObject
     Q_CONSTANT_VAR_PROPERTY(qint64, driveBytesTotal, DriveBytesTotal, 0)
     Q_CONSTANT_REF_PROPERTY(QByteArray, driveDevice, DriveDevice, "")
     Q_CONSTANT_REF_PROPERTY(QString, driveDisplayName, DriveDisplayName, "")
+    Q_CONSTANT_REF_PROPERTY(QString, driveDisplayType, DriveDisplayType, "")
     Q_CONSTANT_REF_PROPERTY(QByteArray, driveFileSystemType, DriveFileSystemType, "")
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsReadOnly, DriveIsReadOnly, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsReady, DriveIsReady, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsRoot, DriveIsRoot, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsBoot, DriveIsBoot, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsConfig, DriveIsConfig, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsOverlay, DriveIsOverlay, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsNetwork, DriveIsNetwork, false)
+    Q_CONSTANT_VAR_PROPERTY(bool, driveIsUsb, DriveIsUsb, false)
     Q_CONSTANT_VAR_PROPERTY(bool, driveIsValid, DriveIsValid, false)
     Q_CONSTANT_REF_PROPERTY(QString, driveName, DriveName, "")
     Q_CONSTANT_REF_PROPERTY(QString, driveRootPath, DriveRootPath, "")
@@ -107,7 +113,9 @@ class FolderTreeModel: public QObjectTreeModel
     Q_WRITABLE_VAR_PROPERTY(bool, showSnapPackageDrives, ShowSnapPackageDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showUnmountedAutofsDrives, ShowUnmountedAutofsDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showTmpfsDrives, ShowTmpfsDrives, false)
+    Q_WRITABLE_VAR_PROPERTY(bool, showOverlayDrives, ShowOverlayDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showBootDrives, ShowBootDrives, false)
+    Q_WRITABLE_VAR_PROPERTY(bool, showConfigDrives, ShowConfigDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showReadOnlyDrives, ShowReadOnlyDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showQrcDrives, ShowQrcDrives, false)
     Q_WRITABLE_VAR_PROPERTY(bool, showStandardPaths, ShowStandardPaths, true)
@@ -144,9 +152,11 @@ public:
         SnapPackage = 0x001,
         UnmountedAutofs = 0x002,
         Tmpfs = 0x004,
-        Boot = 0x008,
-        Root = 0x010,
-        ReadOnly = 0x020,
+        Overlay = 0x008,
+        Boot = 0x010,
+        Config = 0x020,
+        Root = 0x040,
+        ReadOnly = 0x080,
         NoFilter = -1
     };
     Q_DECLARE_FLAGS(DriveFilters, DriveFilter)
@@ -154,6 +164,8 @@ public:
     QDir::Filters filters() const;
     QDir::SortFlags sortFlags() const;
     DriveFilters driveFilters() const;
+
+    static QList<QStorageInfo> mountedVolumes(bool mount=false);
 
 public slots:
     void queueSelect();

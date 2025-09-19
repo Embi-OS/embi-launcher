@@ -7,6 +7,31 @@
 #endif
 #include <QUtils>
 
+static QString getDriveDisplayType(const QStorageInfo& storage) {
+    const QMultiMap<QString, QString> typeMap = {
+        {"root", FolderTreeObject::tr("Système")},
+        {"boot", FolderTreeObject::tr("Système")},
+        {"overlay", FolderTreeObject::tr("Système")},
+        {"ext", FolderTreeObject::tr("Standard")},
+        {"ext2", FolderTreeObject::tr("Standard")},
+        {"ext3", FolderTreeObject::tr("Standard")},
+        {"ext4", FolderTreeObject::tr("Standard")},
+        {"fuseblk", FolderTreeObject::tr("Standard")},
+        {"exfat", FolderTreeObject::tr("USB")},
+        {"vfat", FolderTreeObject::tr("USB")},
+        {"ntfs", FolderTreeObject::tr("USB")},
+        {"ntfs-3g", FolderTreeObject::tr("USB")},
+        {"nfs", FolderTreeObject::tr("Réseau")},
+        {"smb", FolderTreeObject::tr("Réseau")},
+        {"cifs", FolderTreeObject::tr("Réseau")}
+    };
+    const QString tmp = storage.isRoot() ? "root" :
+                            (storage.rootPath().startsWith("/boot") || storage.name().toLower().contains("boot")) ? "boot" :
+                            storage.fileSystemType();
+
+    return typeMap.value(tmp, "");
+}
+
 FolderTreeObject::FolderTreeObject(const QString& path, const QFileInfo& info, bool fileIsStandardPath, QObject* parent):
     QTreeObject(parent),
     m_path(path),
@@ -48,10 +73,24 @@ FolderTreeObject::FolderTreeObject(const QString& path, const QStorageInfo& info
     m_driveIsReadOnly = info.isReadOnly();
     m_driveIsReady = info.isReady();
     m_driveIsRoot = info.isRoot();
+    m_driveIsBoot = info.rootPath().startsWith("/boot") || info.name().toLower().contains("boot");
+    m_driveIsConfig = info.rootPath().startsWith("/config") || info.name().toLower().contains("config");
+    m_driveIsOverlay = info.fileSystemType().contains("overlay");
+    m_driveIsNetwork = info.fileSystemType().contains("nfs") || info.fileSystemType().contains("smb") || info.fileSystemType().contains("cifs");
+    m_driveIsUsb = info.fileSystemType().contains("exfat") || info.fileSystemType().contains("vfat") || info.fileSystemType().contains("ntfs");
     m_driveIsValid = info.isValid();
     m_driveName = info.name();
     m_driveRootPath = info.rootPath();
     m_driveSubVolume = info.subvolume();
+
+    if(m_driveIsRoot || m_driveIsRoot || m_driveIsConfig || m_driveIsOverlay)
+        m_driveDisplayType = tr("Système");
+    else if(m_driveIsNetwork)
+        m_driveDisplayType = tr("Réseau");
+    else if(m_driveIsUsb)
+        m_driveDisplayType = tr("USB");
+    else
+        m_driveDisplayType = tr("Standard");
 
     updateName();
     updateText();
@@ -149,7 +188,9 @@ FolderTreeModel::FolderTreeModel(QObject* parent):
     connect(this, &FolderTreeModel::showSnapPackageDrivesChanged, this, &FolderTreeModel::queueSelect);
     connect(this, &FolderTreeModel::showUnmountedAutofsDrivesChanged, this, &FolderTreeModel::queueSelect);
     connect(this, &FolderTreeModel::showTmpfsDrivesChanged, this, &FolderTreeModel::queueSelect);
+    connect(this, &FolderTreeModel::showOverlayDrivesChanged, this, &FolderTreeModel::queueSelect);
     connect(this, &FolderTreeModel::showBootDrivesChanged, this, &FolderTreeModel::queueSelect);
+    connect(this, &FolderTreeModel::showConfigDrivesChanged, this, &FolderTreeModel::queueSelect);
     connect(this, &FolderTreeModel::showReadOnlyDrivesChanged, this, &FolderTreeModel::queueSelect);
     connect(this, &FolderTreeModel::showQrcDrivesChanged, this, &FolderTreeModel::queueSelect);
     connect(this, &FolderTreeModel::showStandardPathsChanged, this, &FolderTreeModel::queueSelect);
@@ -290,6 +331,10 @@ FolderTreeModel::DriveFilters FolderTreeModel::driveFilters() const
         filters.setFlag(FolderTreeModel::UnmountedAutofs);
     if(m_showTmpfsDrives)
         filters.setFlag(FolderTreeModel::Tmpfs);
+    if(m_showOverlayDrives)
+        filters.setFlag(FolderTreeModel::Overlay);
+    if(m_showConfigDrives)
+        filters.setFlag(FolderTreeModel::Config);
     if(m_showBootDrives)
         filters.setFlag(FolderTreeModel::Boot);
     if(m_showRootDrives)
@@ -298,6 +343,19 @@ FolderTreeModel::DriveFilters FolderTreeModel::driveFilters() const
         filters.setFlag(FolderTreeModel::ReadOnly);
 
     return filters;
+}
+
+QList<QStorageInfo> FolderTreeModel::mountedVolumes(bool mount)
+{
+#if QT_CONFIG(process)
+    if(mount)
+    {
+        QProcess process;
+        process.start("mount", {"-a"});
+        process.waitForFinished();
+    }
+#endif
+    return QStorageInfo::mountedVolumes();
 }
 
 void FolderTreeModel::queueSelect()
@@ -339,14 +397,14 @@ void FolderTreeModel::select()
 
 #ifdef QT_CONCURRENT_LIB
         auto future = QtConcurrent::run([]() {
-            return QStorageInfo::mountedVolumes();
+            return FolderTreeModel::mountedVolumes(true);
         });
         future.then(this, [this](const QList<QStorageInfo>& storageList) mutable {
             setStorageList(storageList);
             setLoading(false);
         });
 #else
-        const QList<QStorageInfo> storageList = QStorageInfo::mountedVolumes();
+        const QList<QStorageInfo> storageList = FolderTreeModel::mountedVolumes(true);
         setStorageList(storageList);
         setLoading(false);
 #endif
@@ -449,6 +507,16 @@ QList<QTreeObject*> FolderTreeModel::fetchDrives(const QList<QStorageInfo>& stor
         // isTmpfs
         if((storage.fileSystemType()==("tmpfs"))
             && !filters.testFlag(FolderTreeModel::Tmpfs))
+            continue;
+
+        // isOverlay
+        if((storage.fileSystemType()==("overlay"))
+            && !filters.testFlag(FolderTreeModel::Overlay))
+            continue;
+
+        // isConfig
+        if((storage.rootPath().startsWith("/config") || storage.name().toLower().contains("config"))
+            && !filters.testFlag(FolderTreeModel::Config))
             continue;
 
         // isBoot

@@ -8,7 +8,8 @@ Version::Version(QObject *parent) :
     m_company(PROJECT_COMPANY),
     m_website(PROJECT_WEBSITE),
     m_copyright(PROJECT_COPYRIGHT),
-    m_version(m_versionSuffix.isEmpty() ? QString("%1").arg(m_globalVersion.toString()) : QString("%1 [%2]").arg(m_globalVersion.toString(),m_versionSuffix))
+    m_version(m_versionSuffix.isEmpty() ? QString("%1").arg(m_globalVersion.toString()) : QString("%1 [%2]").arg(m_globalVersion.toString(),m_versionSuffix)),
+    m_productName(PROJECT_NAME)
 {
 
 }

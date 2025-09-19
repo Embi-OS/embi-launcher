@@ -12,7 +12,9 @@ PaneListView {
     property alias showSnapPackageDrives: driveModel.showSnapPackageDrives
     property alias showUnmountedAutofsDrives: driveModel.showUnmountedAutofsDrives
     property alias showTmpfsDrives: driveModel.showTmpfsDrives
+    property alias showOverlayDrives: driveModel.showOverlayDrives
     property alias showBootDrives: driveModel.showBootDrives
+    property alias showConfigDrives: driveModel.showConfigDrives
     property alias showReadOnlyDrives: driveModel.showReadOnlyDrives
 
     signal mountButtonClicked()
@@ -157,7 +159,9 @@ PaneListView {
         showSnapPackageDrives: showSnapPackageDrives.checked
         showUnmountedAutofsDrives: showUnmountedAutofsDrives.checked
         showTmpfsDrives: showTmpfsDrives.checked
+        showOverlayDrives: showOverlayDrives.checked
         showBootDrives: showBootDrives.checked
+        showConfigDrives: showConfigDrives.checked
         showReadOnlyDrives: showReadOnlyDrives.checked
         showFsTabDrives: showFsTabDrives.checked
     }
@@ -196,7 +200,9 @@ PaneListView {
                 BasicCheckDelegate {id: showSnapPackageDrives; text: qsTr("Voir les disques snap"); checked: false}
                 BasicCheckDelegate {id: showUnmountedAutofsDrives; text: qsTr("Voir les disques non montés"); checked: false}
                 BasicCheckDelegate {id: showTmpfsDrives; text: qsTr("Voir les disques tmpfs"); checked: false}
+                BasicCheckDelegate {id: showOverlayDrives; text: qsTr("Voir les disques overlay"); checked: false}
                 BasicCheckDelegate {id: showBootDrives; text: qsTr("Voir les disques boot"); checked: true}
+                BasicCheckDelegate {id: showConfigDrives; text: qsTr("Voir les disques config"); checked: true}
                 BasicCheckDelegate {id: showReadOnlyDrives; text: qsTr("Voir les disques en lectures seules"); checked: false}
                 BasicCheckDelegate {id: showFsTabDrives; text: qsTr("Voir les disques fstab"); checked: true}
             }
@@ -222,11 +228,13 @@ PaneListView {
         required property string driveFileSystemType
         required property bool driveIsRoot
         required property bool driveIsBoot
+        required property bool driveIsConfig
+        required property bool driveIsOverlay
         required text
         required info
         icon.source: MimeIconHelper.getSvgIconPathForUrl(fileUrl, false)
 
-        enabled: !(driveIsRoot || driveIsBoot)
+        enabled: !(driveIsRoot || driveIsBoot || driveIsConfig || driveIsOverlay)
         canEdit: fstabModel.ModelHelper.contains("mountPoint", filePath) && root.editable
         canEject: enabled && !canEdit && root.editable
 

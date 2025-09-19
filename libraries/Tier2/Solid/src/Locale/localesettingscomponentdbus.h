@@ -19,8 +19,7 @@ public:
     inline QStringList locale() const { return qvariant_cast< QStringList >(property("Locale")); }
 
 public Q_SLOTS: // METHODS
-    inline QDBusMessage SetLocale(const QStringList &locale, bool user_interaction)
-    {
+    inline QDBusMessage SetLocale(const QStringList &locale, bool user_interaction) {
         QVariantList argumentList;
         argumentList<<QVariant::fromValue(locale)<<QVariant::fromValue(user_interaction);
         return callWithArgumentList(QDBus::Block, QStringLiteral("SetLocale"), argumentList);

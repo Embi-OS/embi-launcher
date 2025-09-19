@@ -19,7 +19,7 @@ T.Dialog {
     readonly property double headerHeight: root.header && root.header.visible ? root.header.height : 0
     readonly property double footerHeight: root.footer && root.footer.visible ? root.footer.height : 0
 
-    property bool fullScreen: false
+    property bool fullscreen: false
     property double preferredWidth: Style.dialogImplicitWidth
     property double preferredHeight: Style.dialogImplicitHeight
 
@@ -33,8 +33,8 @@ T.Dialog {
     readonly property double maximumWidth: parentWidth - 2*padding
     readonly property double maximumHeight: parentHeight - 2*padding
 
-    implicitWidth: fullScreen ? maximumWidth : Math.ceil(Math.min(maximumWidth, Math.max(dialogImplicitWidth,preferredWidth)))
-    implicitHeight: fullScreen ? maximumHeight : Math.ceil(Math.min(maximumHeight, Math.max(dialogImplicitHeight,preferredHeight)))
+    implicitWidth: fullscreen ? maximumWidth : Math.ceil(Math.min(maximumWidth, Math.max(dialogImplicitWidth,preferredWidth)))
+    implicitHeight: fullscreen ? maximumHeight : Math.ceil(Math.min(maximumHeight, Math.max(dialogImplicitHeight,preferredHeight)))
 
     x: Math.floor((parentWidth - width) / 2) - parent.ScenePosition.x
     y: Math.floor((parentHeight - height) / 2) - parent.ScenePosition.y

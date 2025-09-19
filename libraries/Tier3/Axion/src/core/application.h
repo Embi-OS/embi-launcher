@@ -11,7 +11,7 @@
 class Application
 {
 public:
-    Application(int &argc, char **argv, const QString& applicationName=PROJECT_NAME);
+    Application(int &argc, char **argv, const QString& applicationName=QString());
     ~Application();
 
     int run(QAnyStringView uri, QAnyStringView typeName);

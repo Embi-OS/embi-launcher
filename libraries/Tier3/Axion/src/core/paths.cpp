@@ -2,11 +2,18 @@
 #include "axion_log.h"
 
 #include <QUtils>
-#include "svgiconhelper.h"
 
 static QDir writableLocation(const QString& folder)
 {
-    QDir d(QCoreApplication::applicationDirPath()+"/"+folder);
+#ifdef Q_OS_BOOT2QT
+    const QString baseLocation = QDir::homePath() + "/" +
+                                 QCoreApplication::organizationName() + "/" +
+                                 QCoreApplication::applicationName();
+#else
+    const QString baseLocation = QCoreApplication::applicationDirPath();
+#endif
+
+    QDir d(baseLocation+"/"+folder);
     if (!d.mkpath(d.absolutePath()))
     {
         AXIONLOG_WARNING()<<"Failed to create directory:"<<d.absolutePath();
@@ -30,7 +37,6 @@ void Paths::init()
     m_ready = true;
 #ifdef Q_OS_WASM
 #else
-    SvgIconHelper::setCachePath(cache());
     QSettingsMapper::setDefaultPath(setting());
     QSettingsMapper::setDefaultName("settings.conf");
 #endif
@@ -76,11 +82,5 @@ QString Paths::setting(const QString& file)
 QString Paths::database(const QString& file)
 {
     QString folder = "databases";
-    return specificLocation(folder, file);
-}
-
-QString Paths::cache(const QString& file)
-{
-    QString folder = ".cache";
     return specificLocation(folder, file);
 }

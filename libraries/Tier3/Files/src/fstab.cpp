@@ -7,6 +7,8 @@
 #include <QTemporaryFile>
 #include <QTextStream>
 
+// Based on https://github.com/KDE/kpmcore/blob/master/src/core/fstab.h
+
 static QString escapeSpaces(const QString& mountPoint)
 {
     QString tmp = mountPoint;
@@ -69,11 +71,10 @@ static void writeEntry(QTextStream& s, const FstabEntry& entry, std::array<unsig
     }
 
     s.setFieldAlignment(QTextStream::AlignLeft);
-    s.setFieldWidth(columnWidth[0]);
-    s << entry.fsSpec()
-      << qSetFieldWidth(columnWidth[1]) << (entry.mountPoint().isEmpty() ? QStringLiteral("none") : escapeSpaces(entry.mountPoint()))
-      << qSetFieldWidth(columnWidth[2]) << entry.type()
-      << qSetFieldWidth(columnWidth[3]) << entry.optionsString() << qSetFieldWidth(0)
+    s << qSetFieldWidth(columnWidth[0]) << escapeSpaces(entry.fsSpec())
+      << qSetFieldWidth(columnWidth[1]) << escapeSpaces(entry.mountPoint().isEmpty() ? QStringLiteral("none") : entry.mountPoint())
+      << qSetFieldWidth(columnWidth[2]) << escapeSpaces(entry.type())
+      << qSetFieldWidth(columnWidth[3]) << escapeSpaces(entry.optionsString()) << qSetFieldWidth(0)
       << entry.dumpFreq() << " "
       << entry.passNumber() << " "
       << entry.comment() << "\n";
@@ -219,6 +220,8 @@ QVariantMap FstabEntry::toSmbParams() const
 
     bool nofail = options.contains("nofail");
     options.remove("nofail");
+    options.remove("_netdev");
+    options.remove("x-systemd.automount");
 
     SMBVersion smbVersion = SMBVersions::Vers_3_0;
     QString vers = options.take("vers").toString();
@@ -272,8 +275,9 @@ FstabEntry FstabEntry::fromSmbParams(const QVariantMap& map, bool createCredenti
     QString name = map.value("name").toString();
     if(name.isEmpty())
     {
+        static const QRegularExpression regexp = QRegularExpression(R"([\s/])");
         name = fsSpec;
-        name.replace("/", "_");
+        name.replace(regexp, "_");
     }
 
     QString mountPoint = map.value("mountPath").toString();
@@ -289,6 +293,8 @@ FstabEntry FstabEntry::fromSmbParams(const QVariantMap& map, bool createCredenti
 
         if(nofail)
             optionsList<<"nofail";
+        optionsList<<"_netdev";
+        optionsList<<"x-systemd.automount";
 
         switch (version) {
         case SMBVersions::Vers_1_0:
@@ -315,7 +321,7 @@ FstabEntry FstabEntry::fromSmbParams(const QVariantMap& map, bool createCredenti
 
         QString credentials = map.value("credentials").toString();
         if(credentials.isEmpty())
-            credentials = QDir::home().absoluteFilePath(QString(".%1_credentials").arg(name));
+            credentials = QString("/etc/.%1_creds").arg(name);
         if(createCredentials)
             QFile::remove(credentials);
 
@@ -378,7 +384,7 @@ QStringList FstabEntry::serializeOptions(const QVariantMap& options)
     return ret;
 }
 
-QList<FstabEntry> FstabEntry::entries( const QString& fstabPath )
+QList<FstabEntry> FstabEntry::entries(const QString& fstabPath)
 {
     QList<FstabEntry> entries;
     QFile fstabFile( fstabPath );
@@ -411,11 +417,11 @@ QList<FstabEntry> FstabEntry::entries( const QString& fstabPath )
                 continue;
             }
 
-            auto fsSpec = splitLine.at(0);
+            auto fsSpec = unescapeSpaces(splitLine.at(0));
             auto mountPoint = unescapeSpaces(splitLine.at(1));
-            auto fsType = splitLine.at(2);
+            auto fsType = unescapeSpaces(splitLine.at(2));
             // Options may be omitted in some rare cases like NixOS generated fstab.
-            auto options = splitLine.length() >= 4 ? splitLine.at(3) : QStringLiteral("defaults");
+            auto options = unescapeSpaces(splitLine.length() >= 4 ? splitLine.at(3) : QStringLiteral("defaults"));
 
             switch (splitLine.length()) {
                 case 4:
@@ -473,7 +479,7 @@ bool FstabEntry::writeMountpoints(const QList<FstabEntry>& entries, const QStrin
 
     static qsizetype MiB = 1 << 20;
     if (fstab.size() > MiB) {
-        qCritical()<<"/etc/fstab size limit exceeded";
+        qCritical()<<fstabPath<<"size limit exceeded";
         return false;
     }
     QFile fstabFile(fstabPath);

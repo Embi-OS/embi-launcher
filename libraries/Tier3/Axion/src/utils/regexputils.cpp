@@ -9,6 +9,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, xmlRegExp, (R"(<\?xml[^>]*\?>|<[^>
 Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, charRegExp, (R"(^[ -~]*$)"))
 Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, alphanumericsRegExp, (R"(^[a-zA-Z0-9._-]+$)"))
 Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, numberRegExp, (R"(^[0-9]*$)"))
+Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, uncPathRegExp, (R"(^\/\/[^\s/]+(?:\/[^\s/]+)+$)"))
+Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, pathRegExp, (R"(^(/\S+)?$)"))
+Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, nonSpaceRegExp, (R"(^\S*$)"))
 
 RegExpUtils::RegExpUtils(QObject *parent) :
     QObject(parent)
@@ -54,4 +57,19 @@ const QRegularExpression& RegExpUtils::alphanumericsRegExp()
 const QRegularExpression& RegExpUtils::numberRegExp()
 {
     return *::numberRegExp;
+}
+
+const QRegularExpression& RegExpUtils::uncPathRegExp()
+{
+    return *::uncPathRegExp;
+}
+
+const QRegularExpression& RegExpUtils::pathRegExp()
+{
+    return *::pathRegExp;
+}
+
+const QRegularExpression& RegExpUtils::nonSpaceRegExp()
+{
+    return *::nonSpaceRegExp;
 }

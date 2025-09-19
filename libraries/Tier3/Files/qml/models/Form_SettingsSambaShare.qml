@@ -11,7 +11,7 @@ FormObjectModel {
         label: qsTr("Nom d'hôte")
         placeholder: "//<server>/<share>"
         validator: StringValidator {
-            pattern: /^\/\/[ -~]+(\/[ -~]+)+$/
+            pattern: RegExpUtils.uncPathRegExp
         }
         targetProperty: "hostName"
     }
@@ -25,13 +25,19 @@ FormObjectModel {
         placeholder: ("/mnt/smb/%1").arg(name.currentText || name.placeholder)
         infos: qsTr("Peut être laissé vide")
         targetProperty: "mountPath"
+        validator: StringValidator {
+            pattern: RegExpUtils.pathRegExp
+        }
     }
     FormTextFieldDelegate {
         id: name
         label: qsTr("Nom")
-        placeholder: hostName.currentText.replace(/\//g, "_")
+        placeholder: hostName.currentText.replace(/[\s/]/g, "_")
         infos: qsTr("Peut être laissé vide")
         targetProperty: "name"
+        validator: StringValidator {
+            pattern: RegExpUtils.nonSpaceRegExp
+        }
     }
     FormSwitchDelegate {
         label: qsTr("Nofail")
@@ -76,11 +82,17 @@ FormObjectModel {
         visible: identification.currentValue===SMBIdentifications.Password
         label: qsTr("Domaine")
         targetProperty: "domain"
+        validator: StringValidator {
+            pattern: RegExpUtils.nonSpaceRegExp
+        }
     }
     FormTextFieldDelegate {
         label: qsTr("Options Avancées")
         infos: qsTr("Liste d'options de montage séparée par des virgules")
         targetProperty: "advancedOptions"
+        validator: StringValidator {
+            pattern: RegExpUtils.nonSpaceRegExp
+        }
     }
     FormInfoDelegate {
         label: qsTr("Crédences")
