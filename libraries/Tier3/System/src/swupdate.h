@@ -80,6 +80,7 @@ class Swupdate: public QObject,
     Q_READONLY_VAR_PROPERTY(int, progress, Progress, 0)
 
     Q_READONLY_REF_PROPERTY(SwupdateProgressMessage, progressMessage, ProgressMessage, {})
+    Q_READONLY_VAR_PROPERTY(int, progressFd, ProgressFd, -1)
 
 protected:
     friend QQmlSingleton<Swupdate>;
@@ -97,9 +98,6 @@ public slots:
 private slots:
     void open();
     void onProgressMessage();
-
-private:
-    int m_progressFd;
 };
 
 #endif // SWUPDATE_H

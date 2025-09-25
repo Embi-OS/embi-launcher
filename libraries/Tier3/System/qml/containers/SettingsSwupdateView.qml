@@ -45,6 +45,14 @@ PaneTreeView {
         }
 
         SeparatorTreeDelegate {}
+        InfoTreeDelegate {text: qsTr("Produit");info: Version.productName}
+        InfoTreeDelegate {text: qsTr("Version");info: Version.version}
+        SeparatorTreeDelegate {}
+        InfoTreeDelegate {text: qsTr("Qt Version");info: DeviceInfo.qtVersion}
+        InfoTreeDelegate {text: qsTr("Platforme");info: DeviceInfo.deviceName}
+        InfoTreeDelegate {text: qsTr("Kernel");info: DeviceInfo.platformKernelVersion}
+        InfoTreeDelegate {text: qsTr("Date de compilation");info: DeviceInfo.buildDate}
+        SeparatorTreeDelegate {}
         InfoTreeDelegate { text: "API Version"; info: Swupdate.progressMessage.apiVersion }
         InfoTreeDelegate { text: "Update Status"; info: SwupdateRecoveryStatuses.asString(Swupdate.progressMessage.status) }
         InfoTreeDelegate { text: "Interface that triggered the update"; info: SwupdateSourceTypes.asString(Swupdate.progressMessage.source) }

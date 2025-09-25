@@ -6,13 +6,11 @@
 #include "dialogs/dialogloader.h"
 
 #include <QSocketNotifier>
-#include <QtConcurrent>
 
 #ifdef SWUPDATE_FOUND
 #include <progress_ipc.h>
 #include <network_ipc.h>
 #include <fcntl.h>
-#include <signal.h>
 #include <unistd.h>
 #endif
 
@@ -58,10 +56,20 @@ void Swupdate::init()
     Swupdate::Get();
 
     SnackbarLoader* loader = new SnackbarLoader(Swupdate::Get());
+    loader->setSeverity(SnackbarSeverities::None);
     loader->setTitle(tr("Mise à jour en cours!"));
     connect(Swupdate::Get(), &Swupdate::isRunningChanged, loader, &SnackbarLoader::setActive);
     connect(Swupdate::Get(), &Swupdate::statusChanged, loader, &SnackbarLoader::setCaption);
     connect(Swupdate::Get(), &Swupdate::progressChanged, loader, &SnackbarLoader::setProgress);
+
+    // DialogLoader* loader = new DialogLoader(Swupdate::Get());
+    // loader->setType(DialogTypes::Busy);
+    // loader->setSeverity(DialogSeverities::None);
+    // loader->setTitle(tr("Patienter"));
+    // loader->setMessage(tr("Mise à jour en cours!"));
+    // connect(Swupdate::Get(), &Swupdate::isRunningChanged, loader, &DialogLoader::setActive);
+    // connect(Swupdate::Get(), &Swupdate::statusChanged, loader, &DialogLoader::setInfos);
+    // connect(Swupdate::Get(), &Swupdate::progressChanged, loader, &DialogLoader::setProgress);
 }
 
 void Swupdate::unInit()
@@ -81,27 +89,31 @@ bool Swupdate::isReady() const
 void Swupdate::open()
 {
 #ifdef SWUPDATE_FOUND
-    m_progressFd = progress_ipc_connect(false);
-    if (m_progressFd < 0) {
+    int fd = progress_ipc_connect(false);
+    setProgressFd(fd);
+    SOLIDLOG_DEBUG()<<"Swupdate open progress socket with fd:"<<fd;
+    if (fd < 0) {
         SOLIDLOG_WARNING()<<"Swupdate: Failed to connect to SWUpdate progress IPC";
         QTimer::singleShot(500, this, &Swupdate::open);
         return;
     }
     else {
-        QSocketNotifier* socketNotifier = new QSocketNotifier(m_progressFd, QSocketNotifier::Read, this);
+        QSocketNotifier* socketNotifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
         connect(socketNotifier, &QSocketNotifier::activated, this, &Swupdate::onProgressMessage);
 
-        connect(this, &QObject::destroyed, this, [fd=m_progressFd]() {
+        connect(this, &QObject::destroyed, this, [fd]() {
             close(fd);
         });
     }
+#else
+    SOLIDLOG_WARNING()<<"Swupdate has not been found on this system";
 #endif
 }
 
 bool Swupdate::update(const QString& file)
 {
 #ifdef SWUPDATE_FOUND
-    return QProcess::startDetached("swupdate-client", {"-q", file});
+    return QProcess::startDetached("swupdate-client", {"-qp", file});
 #else
     return false;
 #endif
@@ -109,16 +121,19 @@ bool Swupdate::update(const QString& file)
 
 void Swupdate::onProgressMessage()
 {
-    if(m_progressFd < 0)
+    int fd = m_progressFd;
+    if(fd < 0)
         return;
 
     SwupdateProgressMessage msg;
 
 #ifdef SWUPDATE_FOUND
     struct progress_msg raw;
-    int rc = progress_ipc_receive(&m_progressFd, &raw);
+    int rc = progress_ipc_receive(&fd, &raw);
     if (rc <= 0) {
         SOLIDLOG_WARNING()<<"Swupdate: Error receiving progress message";
+        setProgressFd(fd);
+        QTimer::singleShot(500, this, &Swupdate::open);
         return;
     }
 
@@ -167,13 +182,17 @@ void Swupdate::onProgressMessage()
     }
     else
     {
-        if(msg.status==SwupdateRecoveryStatuses::Done || msg.status==SwupdateRecoveryStatuses::Success)
+        if(msg.status==SwupdateRecoveryStatuses::Done)
         {
-            AxionHelper::warningReboot(tr("Mise à jour terminée"));
+            AxionHelper::criticalReboot(tr("Mise à jour terminée"));
+        }
+        if(msg.status==SwupdateRecoveryStatuses::Success)
+        {
+
         }
         else if(msg.status==SwupdateRecoveryStatuses::Failure)
         {
-            AxionHelper::warningReboot(tr("Echec de la mise à jour"));
+
         }
 
         resetProgress();
