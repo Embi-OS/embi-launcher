@@ -29,6 +29,7 @@ public slots:
     void disable();
     void start();
     void stop();
+    void restart();
 
 signals:
     void enableFinished(bool success, const QString &message);

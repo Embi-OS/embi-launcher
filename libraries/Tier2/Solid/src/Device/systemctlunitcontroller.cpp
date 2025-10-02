@@ -85,6 +85,24 @@ void SystemCtlUnitController::stop()
     proc->start("systemctl", {"stop", "--now", m_unit});
 }
 
+void SystemCtlUnitController::restart()
+{
+    if(m_unit.isEmpty())
+        return;
+
+    setProcessing(true);
+    setActive(true);
+
+    QProcess *proc = new QProcess(this);
+    connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
+        bool ok = (exitCode >= 0);
+        emit this->enableFinished(ok, ok ? QStringLiteral("Unit restarted") : proc->readAllStandardError());
+        proc->deleteLater();
+        checkStatus();
+    }, Qt::QueuedConnection);
+    proc->start("systemctl", {"restart", "--now", m_unit});
+}
+
 QStringList SystemCtlUnitController::units(const QString& pattern)
 {
     QStringList result;
@@ -150,7 +168,7 @@ void SystemCtlUnitController::checkStatus()
         parseStatusOutput(output.isEmpty() ? error : output);
         proc->deleteLater();
     });
-    proc->start("systemctl", {"status", m_unit, "--no-pager"});
+    proc->start("systemctl", {"status", m_unit, "--no-pager", "--line=0"});
 }
 
 void SystemCtlUnitController::parseStatusOutput(const QString &output)

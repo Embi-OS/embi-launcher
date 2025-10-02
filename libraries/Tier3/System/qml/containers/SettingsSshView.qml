@@ -86,7 +86,7 @@ PaneTreeView {
         }
         SeparatorTreeDelegate {}
         LabelDelegate {
-            font: Style.textTheme.subtitle1
+            font: sshController.unitExists ? Style.textTheme.code : Style.textTheme.subtitle1
             text: sshController.unitExists ? sshController.status : qsTr("Aucun service ssh trouvé")
         }
     }

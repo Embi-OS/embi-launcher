@@ -2,6 +2,7 @@
 #define SWUPDATE_H
 
 #include <QDefs>
+#include <QSocketNotifier>
 #include "qsingleton.h"
 
 Q_ENUM_CLASS(SwupdateRecoveryStatuses, SwupdateRecoveryStatus,
@@ -77,6 +78,8 @@ class Swupdate: public QObject,
     Q_PROPERTY(bool isReady READ isReady CONSTANT FINAL)
     Q_READONLY_VAR_PROPERTY(bool, isRunning, IsRunning, false)
     Q_READONLY_REF_PROPERTY(QString, status, Status, {})
+    Q_READONLY_REF_PROPERTY(QString, file, File, {})
+    Q_READONLY_REF_PROPERTY(QString, version, Version, {})
     Q_READONLY_VAR_PROPERTY(int, progress, Progress, 0)
 
     Q_READONLY_REF_PROPERTY(SwupdateProgressMessage, progressMessage, ProgressMessage, {})
@@ -94,10 +97,15 @@ public slots:
     static void unInit();
 
     bool update(const QString& file);
+    bool restart();
 
 private slots:
+    void test();
     void open();
     void onProgressMessage();
+
+private:
+    QSocketNotifier* m_socketNotifier=nullptr;
 };
 
 #endif // SWUPDATE_H

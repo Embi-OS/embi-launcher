@@ -1,6 +1,7 @@
 #include <System>
 #include <Solid>
 #include <Axion>
+#include <Swupdate>
 
 int main(int argc, char *argv[])
 {

@@ -249,8 +249,8 @@ public slots:
     static void showAbout();
     static void showAboutQt();
 
-    static void warningRestart(const QString& details="");
-    static void warningReboot(const QString& details="");
+    static void warningRestart(const QString& title="", const QString& details="");
+    static void warningReboot(const QString& title="", const QString& details="");
 
     static void criticalRestart(const QString& message="", const QString& traces="");
     static void criticalReboot(const QString& message="", const QString& traces="");

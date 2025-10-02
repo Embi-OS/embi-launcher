@@ -49,7 +49,7 @@ T.Control {
                                    severity===SnackbarSeverities.Warning ? Style.colorWarning :
                                    severity===SnackbarSeverities.Error ? Style.colorError :
                                    severity===SnackbarSeverities.Fatal ? Style.colorFatal :
-                                   severity===SnackbarSeverities.Success ? Style.colorSuccess : Style.colorWhite
+                                   severity===SnackbarSeverities.Success ? Style.colorSuccess : ColorUtils.blend(Style.colorPrimary, Style.colorWhite, 0.8)
 
     readonly property string icon: severity===SnackbarSeverities.Info ? MaterialIcons.informationOutline :
                                    severity===SnackbarSeverities.Warning ? MaterialIcons.alertOutline :
@@ -71,7 +71,7 @@ T.Control {
             return root.color
         if(outlined)
             return Style.colorPrimaryDark
-        return ColorUtils.blend(Style.colorBackground, root.color, 0.1)
+        return ColorUtils.blend(Style.colorBackground, root.color, 0.3)
     }
 
     contentItem: RowLayout {
@@ -84,35 +84,52 @@ T.Control {
             color: root.filled ? root.foregroundColor : root.color
         }
 
-        LabelWithCaption {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter
-            haveAText: !(text === "")
-            color: root.foregroundColor
-            text: root.title
-            textFont: Style.textTheme.subtitle1
-            textMaximumLineCount: 0
-            caption: root.caption
-            captionFont: root.font
-            captionMaximumLineCount: 7
-        }
+        ColumnLayout {
+            spacing: 0
 
-        ClickableLabel {
-            Layout.alignment: Qt.AlignTop
-            visible: root.button!==""
-            font: Style.textTheme.capital
-            text: root.button
-            color: root.foregroundColor
-            onClicked: root.accepted()
-        }
+            RowLayout {
+                spacing: root.spacing
 
-        ClickableIcon {
-            Layout.alignment: Qt.AlignTop
-            size: 24
-            visible: root.closable
-            icon: MaterialIcons.close
-            color: root.foregroundColor
-            onClicked: root.closed()
+                BasicLabel {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: text!=="" || root.button!=="" || root.closable
+                    color: root.foregroundColor
+                    text: root.title
+                    font: Style.textTheme.subtitle1
+                    maximumLineCount: 0
+                }
+
+                ClickableLabel {
+                    Layout.alignment: Qt.AlignTop
+                    visible: root.button!==""
+                    font: Style.textTheme.capital
+                    text: root.button
+                    color: root.foregroundColor
+                    onClicked: root.accepted()
+                }
+
+                ClickableIcon {
+                    Layout.alignment: Qt.AlignTop
+                    size: 24
+                    visible: root.closable
+                    icon: MaterialIcons.close
+                    color: root.foregroundColor
+                    onClicked: root.closed()
+                }
+            }
+
+            BasicLabel {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                visible: !(text === "")
+                color: root.foregroundColor
+                text: root.caption
+                font: root.font
+                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                maximumLineCount: 7
+            }
         }
     }
 

@@ -136,9 +136,27 @@ StandardObjectModel {
     }
 
     StandardObject {
+        id: swupdate
         group: "300_System"
-        text: qsTr("SWUpdate")
+        text: "SWUpdate"
         icon: MaterialIcons.swupdate
-        delegate: SettingsSwupdateView {}
+
+        asynchronous: false
+        delegate: PaneTabView { tabsModel: swupdate.tabsModel }
+
+        value: tabsModel
+        readonly property StandardObjectModel tabsModel: StandardObjectModel {
+            StandardObject {
+                text: qsTr("A propos")
+                icon: MaterialIcons.informationOutline
+                delegate: SwupdateAboutView {}
+            }
+
+            StandardObject {
+                text: qsTr("Configuration")
+                icon: MaterialIcons.cog
+                delegate: SwupdateSettingsView {}
+            }
+        }
     }
 }

@@ -57,10 +57,8 @@ BasicPane {
 
         add: Transition {
             enabled: root.transitionsEnabled
-            ParallelAnimation {
-                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: root.transitionsDuration }
-                NumberAnimation { property: "scale"; from: 0.8; to: 1; duration: root.transitionsDuration }
-            }
+            NumberAnimation { property: "opacity"; from: 0; to: 1; duration: root.transitionsDuration }
+            NumberAnimation { property: "scale"; from: 0.8; to: 1; duration: root.transitionsDuration }
         }
 
         move: Transition {

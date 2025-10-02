@@ -212,13 +212,14 @@ void AxionHelper::showAboutQt()
     DialogManager::Get()->showMessage(settings);
 }
 
-void AxionHelper::warningRestart(const QString& details)
+void AxionHelper::warningRestart(const QString& title, const QString& details)
 {
     if(AxionHelper::Get()->getPendingRestart())
         return;
     AxionHelper::markForRestart();
 
     QVariantMap settings;
+    settings["title"] = title;
     settings["caption"] = tr("L'application doit être relancée pour appliquer tous les changements");
     settings["details"] = details;
     settings["button"] = tr("Relancer");
@@ -228,13 +229,14 @@ void AxionHelper::warningRestart(const QString& details)
     });
 }
 
-void AxionHelper::warningReboot(const QString& details)
+void AxionHelper::warningReboot(const QString& title, const QString& details)
 {
     if(AxionHelper::Get()->getPendingReboot())
         return;
     AxionHelper::markForReboot();
 
     QVariantMap settings;
+    settings["title"] = title;
     settings["caption"] = tr("Le système doit redémarrer pour appliquer tous les changements");
     settings["details"] = details;
     settings["button"] = tr("Redémarrer");

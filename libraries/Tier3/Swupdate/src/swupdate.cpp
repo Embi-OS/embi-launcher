@@ -3,9 +3,9 @@
 
 #include "axion_helpertypes.h"
 #include "dialogs/snackbarloader.h"
+#include "dialogs/snackbarmanager.h"
 #include "dialogs/dialogloader.h"
-
-#include <QSocketNotifier>
+#include "Device/ubootsettings.h"
 
 #ifdef SWUPDATE_FOUND
 #include <progress_ipc.h>
@@ -48,7 +48,10 @@ Swupdate::Swupdate(QObject* parent):
     QObject(parent),
     m_progressFd(-1)
 {
-    open();
+    QTimer::singleShot(2000, this, [this](){
+        test();
+        open();
+    });
 }
 
 void Swupdate::init()
@@ -86,6 +89,20 @@ bool Swupdate::isReady() const
 #endif
 }
 
+void Swupdate::test()
+{
+    const QString ustate = UBootSettings::printEnv("ustate");
+    if(ustate=="1")
+    {
+        SnackbarManager::Get()->showInfo(QVariantMap({{"title", tr("Mise à jour réussie")}, {"closable", true}}));
+        UBootSettings::setEnv("ustate", "0");
+    }
+    else if(ustate=="3")
+    {
+        SnackbarManager::Get()->showError(QVariantMap({{"title", tr("Mise à jour échouée")}, {"closable", true}}));
+    }
+}
+
 void Swupdate::open()
 {
 #ifdef SWUPDATE_FOUND
@@ -93,15 +110,16 @@ void Swupdate::open()
     setProgressFd(fd);
     SOLIDLOG_DEBUG()<<"Swupdate open progress socket with fd:"<<fd;
     if (fd < 0) {
+        SnackbarManager::Get()->showError(tr("Impossible de se connecter à SWUpdate"))->setClosable(true);
         SOLIDLOG_WARNING()<<"Swupdate: Failed to connect to SWUpdate progress IPC";
         QTimer::singleShot(500, this, &Swupdate::open);
         return;
     }
     else {
-        QSocketNotifier* socketNotifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
-        connect(socketNotifier, &QSocketNotifier::activated, this, &Swupdate::onProgressMessage);
+        m_socketNotifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
+        connect(m_socketNotifier, &QSocketNotifier::activated, this, &Swupdate::onProgressMessage);
 
-        connect(this, &QObject::destroyed, this, [fd]() {
+        connect(m_socketNotifier, &QObject::destroyed, this, [fd]() {
             close(fd);
         });
     }
@@ -113,7 +131,30 @@ void Swupdate::open()
 bool Swupdate::update(const QString& file)
 {
 #ifdef SWUPDATE_FOUND
-    return QProcess::startDetached("swupdate-client", {"-qp", file});
+    return QProcess::execute("swupdate-client", {"-q", "-p", file});
+#else
+    return false;
+#endif
+}
+
+bool Swupdate::restart()
+{
+#ifdef SWUPDATE_FOUND
+    m_socketNotifier->deleteLater();
+    m_socketNotifier = nullptr;
+
+    QProcess *proc = new QProcess(this);
+    connect(proc, &QProcess::finished, this, [this, proc](int exitCode, QProcess::ExitStatus) {
+        bool ok = (exitCode >= 0);
+        if(ok)
+            SOLIDLOG_DEBUG()<<"swupdate.service restarted";
+        else
+            SOLIDLOG_WARNING()<<"Failed to restart swupdate.service";
+        proc->deleteLater();
+        open();
+    }, Qt::QueuedConnection);
+    proc->start("systemctl", {"restart", "--now", "swupdate.service"});
+    return true;
 #else
     return false;
 #endif
@@ -157,45 +198,71 @@ void Swupdate::onProgressMessage()
 
     // optionally emit log
     SOLIDLOG_DEBUG().noquote()<<msg.toString();
-    qDebug().noquote()<<msg.toString();
 
     setIsRunning(msg.status!=SwupdateRecoveryStatuses::Idle &&
                  msg.status!=SwupdateRecoveryStatuses::Done &&
                  msg.status!=SwupdateRecoveryStatuses::Success &&
                  msg.status!=SwupdateRecoveryStatuses::Failure);
 
-    if(msg.status==SwupdateRecoveryStatuses::Download)
-    {
+    switch (msg.status) {
+    case SwupdateRecoveryStatuses::Start:
+        if(msg.currentStep==0 && !msg.info.isEmpty())
+        {
+            setFile(msg.info);
+            setStatus(QString("%1, %2").arg(SwupdateRecoveryStatuses::asString(msg.status), msg.info));
+            SnackbarManager::Get()->show(QVariantMap({{"title", tr("%1").arg(SwupdateRecoveryStatuses::asString(msg.status))}, {"caption", msg.info}}));
+        }
+        else
+        {
+            setStatus(QString("%1, step %2/%3")
+                          .arg(SwupdateRecoveryStatuses::asString(msg.status))
+                          .arg(msg.currentStep).arg(msg.nbSteps));
+        }
+        break;
+    case SwupdateRecoveryStatuses::Run:
+        if(msg.currentStep==0 && !msg.info.isEmpty())
+        {
+            setVersion(msg.info);
+            setStatus(QString("%1, %2").arg(SwupdateRecoveryStatuses::asString(msg.status), msg.info));
+            SnackbarManager::Get()->show(QVariantMap({{"title", tr("%1").arg(SwupdateRecoveryStatuses::asString(msg.status))}, {"caption", msg.info}}));
+        }
+        else
+        {
+            setStatus(QString("%1, step %2/%3")
+                          .arg(SwupdateRecoveryStatuses::asString(msg.status))
+                          .arg(msg.currentStep).arg(msg.nbSteps));
+        }
+        break;
+    case SwupdateRecoveryStatuses::Download:
         setProgress(msg.downloadPercent*100.0);
-
         setStatus(QString("%1, %2  %3%")
                       .arg(SwupdateRecoveryStatuses::asString(msg.status), ::bytes(msg.downloadBytes))
                       .arg(msg.downloadPercent));
-    }
-    else if(msg.status==SwupdateRecoveryStatuses::Progress || msg.status==SwupdateRecoveryStatuses::Run)
-    {
+        break;
+    case SwupdateRecoveryStatuses::Progress:
         setProgress(msg.currentStepPercent*100.0);
-
         setStatus(QString("%1, step %2/%3  %4%")
                       .arg(SwupdateRecoveryStatuses::asString(msg.status))
                       .arg(msg.currentStep).arg(msg.nbSteps).arg(msg.currentStepPercent));
-    }
-    else
-    {
+        break;
+    default:
         if(msg.status==SwupdateRecoveryStatuses::Done)
         {
-            AxionHelper::criticalReboot(tr("Mise à jour terminée"));
+            AxionHelper::warningReboot(tr("Mise à jour installée"));
         }
         if(msg.status==SwupdateRecoveryStatuses::Success)
         {
-
+            SnackbarManager::Get()->showSuccess(tr("Mise à jour réussie"));
         }
         else if(msg.status==SwupdateRecoveryStatuses::Failure)
         {
-
+            SnackbarManager::Get()->showError(tr("Mise à jour échouée"));
         }
 
         resetProgress();
         resetStatus();
+        resetFile();
+        resetVersion();
+        break;
     }
 }
