@@ -31,7 +31,7 @@ QString DeviceInfo::about()
     about += QString("Qt Version: %1 [%2]\n").arg(qtVersion(), buildAbi());
     about += QString("Qt Version build: %1\n").arg(qtVersionBuild());
     about += QString("Version: %1\n").arg(QVersionNumber(PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH).toString());
-    about += QString("Build date: %1 at %2\n").arg(buildDate(), buildTime());
+    about += QString("Build date: %1 at %2").arg(buildDate(), buildTime());
     return about;
 }
 

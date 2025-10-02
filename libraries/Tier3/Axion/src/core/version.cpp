@@ -28,14 +28,19 @@ void Version::dumpInfos() const
 
 QString Version::about() const
 {
-    QString about;
-    about += m_productName.isEmpty() ? "" : tr("Produit: %1\n").arg(m_productName);
-    about += m_version.isEmpty() ? "" : tr("Version: %1\n").arg(m_version);
-    about += tr("Version Qt: %1\n").arg(qVersion());
-    about += m_company.isEmpty() ? "" : tr("Entreprise: %1\n").arg(m_company);
-    about += m_website.isEmpty() ? "" : tr("Site web: %1\n").arg(m_website);
-    about += m_copyright.isEmpty() ? "" : tr("Copyright: %1\n").arg(m_copyright);
-    return about;
+    QStringList about;
+    if(!m_productName.isEmpty())
+        about += tr("Produit: %1").arg(m_productName);
+    if(!m_version.isEmpty())
+        about += tr("Version: %1").arg(m_version);
+    about += tr("Version Qt: %1").arg(qVersion());
+    if(!m_company.isEmpty())
+        about += tr("Entreprise: %1").arg(m_company);
+    if(!m_website.isEmpty())
+        about += tr("Site web: %1").arg(m_website);
+    if(!m_copyright.isEmpty())
+        about += tr("Copyright: %1").arg(m_copyright);
+    return about.join("\n");
 }
 
 QString Version::aboutQt() const

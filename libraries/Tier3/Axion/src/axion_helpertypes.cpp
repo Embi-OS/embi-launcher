@@ -199,7 +199,7 @@ void AxionHelper::showAbout()
     QVariantMap settings;
     settings["message"] = tr("A propos!");
     settings["infos"] = Version::Get()->about();
-    settings["buttonAccept"] = "OK";
+    settings["diagnose"] = false;
     DialogManager::Get()->showMessage(settings);
 }
 
@@ -208,7 +208,7 @@ void AxionHelper::showAboutQt()
     QVariantMap settings;
     settings["message"] = tr("A propos de Qt!");
     settings["infos"] = Version::Get()->aboutQt();
-    settings["buttonAccept"] = "OK";
+    settings["diagnose"] = false;
     DialogManager::Get()->showMessage(settings);
 }
 
