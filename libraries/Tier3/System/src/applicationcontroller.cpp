@@ -9,8 +9,13 @@
 #include "core/paths.h"
 #include "dialogs/dialogmanager.h"
 
+#ifndef APPCONTROLLER_CMD
 #define APPCONTROLLER_CMD QStringLiteral("appcontroller")
+#endif
+
+#ifndef B2QT_PREFIX
 #define B2QT_PREFIX "/usr/bin/b2qt"
+#endif
 
 ApplicationController::ApplicationController(QObject *parent) :
     QObject(parent),
@@ -274,7 +279,7 @@ void ApplicationController::launch(const QString& path)
     if (fileInfo.isExecutable())
     {
         SOLIDLOG_INFO()<<"Launching application"<<path;
-        QMetaObject::invokeMethod(qApp, [path, fileInfo](){
+        QMetaObject::invokeMethod(qApp, [path](){
             qApp->quit();
             QProcess::startDetached("systemd-run", {APPCONTROLLER_CMD, path});
         }, Qt::QueuedConnection);

@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include <sys/reboot.h>
 
+#ifndef APPCONTROLLER_CMD
+#define APPCONTROLLER_CMD QStringLiteral("appcontroller")
+#endif
+
 PowerComponentB2qt::PowerComponentB2qt() :
     AbstractPowerComponent()
 {
@@ -29,7 +33,7 @@ void PowerComponentB2qt::restart()
     QMetaObject::invokeMethod(qApp, [](){
         ::sync();
         qApp->quit();
-        QProcess::startDetached("appcontroller", QStringList("--restart"));
+        QProcess::startDetached(APPCONTROLLER_CMD, QStringList("--restart"));
     }, Qt::QueuedConnection);
 }
 
@@ -54,8 +58,7 @@ void PowerComponentB2qt::reboot()
 void PowerComponentB2qt::launch(const QString& path)
 {
     QMetaObject::invokeMethod(qApp, [path](){
-        ::sync();
         qApp->quit();
-        QProcess::startDetached("appcontroller", QStringList({"--detach", path}));
+        QProcess::startDetached("systemd-run", {APPCONTROLLER_CMD, path});
     }, Qt::QueuedConnection);
 }

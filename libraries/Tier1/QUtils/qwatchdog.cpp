@@ -18,6 +18,10 @@
 # include <Windows.h>
 #endif
 
+#ifndef APPCONTROLLER_CMD
+#define APPCONTROLLER_CMD QStringLiteral("appcontroller")
+#endif
+
 #define FREQUENCY_MSECS 1000 // ms
 #define WARNING_TIME_BLOCKED 3000 // ms
 #define MAX_TIME_BLOCKED 60000 // ms
@@ -89,7 +93,7 @@ private:
         QUTILSLOG_INFO()<<"Restarting application...";
         qApp->exit();
 #if defined(Q_OS_BOOT2QT)
-        QProcess::startDetached("appcontroller", QStringList("--restart"));
+        QProcess::startDetached(APPCONTROLLER_CMD, QStringList("--restart"));
 #elif defined(Q_OS_LINUX)
         QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 #endif
