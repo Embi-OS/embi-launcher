@@ -19,7 +19,7 @@
 #endif
 
 #ifndef APPCONTROLLER_CMD
-#define APPCONTROLLER_CMD QStringLiteral("appcontroller")
+#define APPCONTROLLER_CMD "appcontroller"
 #endif
 
 #define FREQUENCY_MSECS 1000 // ms

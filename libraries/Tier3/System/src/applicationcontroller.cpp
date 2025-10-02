@@ -10,7 +10,7 @@
 #include "dialogs/dialogmanager.h"
 
 #ifndef APPCONTROLLER_CMD
-#define APPCONTROLLER_CMD QStringLiteral("appcontroller")
+#define APPCONTROLLER_CMD "appcontroller"
 #endif
 
 #ifndef B2QT_PREFIX

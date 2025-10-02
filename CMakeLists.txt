@@ -4,9 +4,7 @@ cmake_minimum_required(VERSION 3.24)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(QT_CREATOR_SKIP_MAINTENANCE_TOOL_PROVIDER ON)
 
-project(Embi-Launcher
-    VERSION 1.2.1
-    LANGUAGES CXX)
+project(Embi-Launcher LANGUAGES CXX)
 
 include(Boot2Qt)
 
@@ -111,6 +109,8 @@ add_definitions(
     -DPROJECT_COMPANY="Embi-OS"
     -DPROJECT_WEBSITE="github.com/Embi-OS"
     -DPROJECT_DOMAIN="embi.os"
+    -DAPPCONTROLLER_CMD="appcontroller"
+    -DB2QT_PREFIX="/etc/default/b2qt"
 )
 
 set(TRANSLATION_LUPDATE OFF)
