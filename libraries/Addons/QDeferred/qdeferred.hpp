@@ -4,6 +4,7 @@
 #include <QExplicitlySharedDataPointer>
 #include <QList>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <functional>
 #include <QDebug>
 
@@ -553,6 +554,9 @@ template<class ...Types>
 template<class ...OtherTypes>
 QDeferred<OtherTypes...> QDeferred<Types...>::delay(int msec, QDeferred<OtherTypes...> defer)
 {
+    if(msec<=0)
+        return defer;
+
     QDeferred<OtherTypes...> delayed;
 
     defer.complete([delayed, msec](bool result, OtherTypes(...args)) mutable {

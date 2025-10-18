@@ -20,7 +20,8 @@ T.Control {
     padding: Style.snackbarPadding + Style.snackbarInset
     font: Style.textTheme.body1
 
-    hoverEnabled: tapHandler.enabled
+    hoverEnabled: clickable
+    property bool clickable: details!==""
     property alias pressed: tapHandler.pressed
     property alias tapCount: tapHandler.tapCount
     property alias timeHeld: tapHandler.timeHeld
@@ -89,11 +90,11 @@ T.Control {
 
             RowLayout {
                 spacing: root.spacing
+                visible: root.title!=="" || root.button!=="" || root.closable
 
                 BasicLabel {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
-                    visible: text!=="" || root.button!=="" || root.closable
                     color: root.foregroundColor
                     text: root.title
                     font: Style.textTheme.subtitle1
@@ -121,7 +122,7 @@ T.Control {
 
             BasicLabel {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignVCenter
                 visible: !(text === "")
                 color: root.foregroundColor
                 text: root.caption
@@ -160,17 +161,27 @@ T.Control {
             radius: 4
 
             relativeBackgroundColor: root.backgroundColor
-            focussed: root.pressed || root.hovered
-            pressed: root.pressed
+            focussed: root.clickable && (root.pressed || root.hovered)
+            pressed: root.clickable && root.pressed
         }
 
         TapHandler {
             id: tapHandler
-            enabled: root.details!==""
+            // enabled: root.details!==""
+            grabPermissions: PointerHandler.TakeOverForbidden
             gesturePolicy: TapHandler.ReleaseWithinBounds
-            onTapped: root.clicked()
-            onDoubleTapped: root.doubleClicked()
-            onLongPressed: root.longPressed()
+            onTapped: {
+                if(root.clickable)
+                    root.clicked()
+            }
+            onDoubleTapped: {
+                if(root.clickable)
+                    root.doubleClicked()
+            }
+            onLongPressed:  {
+                if(root.clickable)
+                    root.longPressed()
+            }
         }
     }
 }
